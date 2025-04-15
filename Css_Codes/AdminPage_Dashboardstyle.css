@@ -1,0 +1,314 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+
+:root {
+    --border-color: #e6e5e5;
+    --panel-color: #FFF;
+    --text-color: #000;
+    --title-icon-color: #fff;
+    --primary-color: #009688;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    width: 260px;
+    background: #11101d;
+    padding: 15px;
+    z-index: 99;
+}
+.logo {
+    font-size: 25px;
+    padding: 0 15px;
+}
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+}
+.menu-content {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin-top: 40px;
+    overflow-y: scroll;
+    flex: 1;
+}
+.menu-content::-webkit-scrollbar {
+    display: none;
+}
+.menu-items {
+    height: 100%;
+    width: 100%;
+    list-style: none;
+    transition: all 0.4s ease;
+    padding: 0;
+}
+.submenu-active .menu-items {
+    transform: translateX(-56%);
+}
+.menu-title {
+    color: #fff;
+    font-size: 14px;
+    padding: 15px 20px;
+}
+.item {
+    font-size: 18px;
+}
+
+.item.bottom1 {
+    margin-top: 115%;
+}
+
+.item a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.item a,
+.submenu-item {
+    padding: 16px;
+    display: inline-block;
+    width: 100%;
+    border-radius: 12px;
+}
+.item i {
+    font-size: 14px;
+}
+.item a:hover,
+.submenu-item:hover,
+.submenu .menu-title:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.submenu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+}
+.submenu {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: calc(-100% - 26px);
+    height: calc(100% + 100vh);
+    background: #11101d;
+    display: none;
+}
+.show-submenu ~ .submenu {
+    display: block;
+}
+.submenu .menu-title {
+    border-radius: 12px;
+    cursor: pointer;
+}
+.submenu .menu-title i {
+    margin-right: 10px;
+}
+.navbar,
+.main {
+    left: 260px;
+    width: calc(100% - 260px);
+    transition: all 0.5s ease;
+    z-index: 1000;
+}
+.sidebar.close ~ .navbar,
+.sidebar.close ~ .main {
+    left: 0;
+    width: 100%;
+}
+.navbar {
+    position: fixed;
+    color: #fff;
+    padding: 15px 20px;
+    font-size: 25px;
+    background: #009688;
+    cursor: pointer;
+}
+.navbar #sidebar-close {
+    cursor: pointer;
+}
+
+.navbar #sidebar-admin {
+    cursor: pointer;
+    position: fixed;
+    right: 30px;
+    top: 13px;
+    background-color: green;
+    padding: 10px;
+    border-radius: 100%;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    transition: 0.5s;
+    z-index: 1001; 
+}
+
+.main {
+    position: relative;
+    display: flex;
+    height: 100vh;
+    z-index: 100;
+    background: #e7f2fd;
+    overflow: hidden;
+    overflow-y: auto; 
+}
+
+.title {
+    align-items: center;
+    margin: 30px 0;
+    position: absolute;
+    top: 8%;
+    left: 3%;
+}
+.title i {
+    height: 35px;
+    width: 35px;
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    color: var(--title-icon-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-left: 30px;
+}
+.title #text1 {
+    position: absolute;
+    width: 800%;
+
+    font-size: 34px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-left: 10px;
+    top: -15%;
+    left: 100%;
+}
+
+
+
+
+
+.profile-card {
+    display: none; 
+    flex-direction: column;
+    align-items: center;
+    max-width: 370px;
+    width: 100%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 10%;
+    right: 10px;
+    z-index: 1001; 
+}
+
+.profile-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 36%;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    background-color: lightgreen;
+}
+.image {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    background-color: lightseagreen;
+    padding: 3px;
+    margin-bottom: 10px;
+}
+.image .profile-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+.profile-card .text-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+}
+.text-data .name {
+    font-size: 22px;
+    font-weight: 500;
+}
+.text-data .job {
+    font-size: 15px;
+    font-weight: 400;
+}
+.profile-card .media-buttons {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+.media-buttons .link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    height: 34px;
+    width: 34px;
+    border-radius: 50%;
+    margin: 0 8px;
+    background-color: #009688;
+    text-decoration: none;
+}
+.profile-card .buttons {
+    display: flex;
+    align-items: center;
+    margin-top: 25px;
+}
+.buttons .buttonn {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    border: none;
+    border-radius: 24px;
+    margin: 0 10px;
+    padding: 8px 24px;
+    background-color: #009688;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.buttons .buttonn:hover {
+    background-color: lightgreen;
+}
+.profile-card .analytics {
+    display: flex;
+    align-items: center;
+    margin-top: 25px;
+}
+.analytics .data {
+    display: flex;
+    align-items: center;
+    color: #333;
+    padding: 0 20px;
+    border-right: 2px solid #e7e7e7;
+}
+.data i {
+    font-size: 18px;
+    margin-right: 6px;
+}
+.data:last-child {
+    border-right: none;
+}
+
+.navbar #sidebar-admin:hover ~ .profile-card {
+    display: flex; 
+}
+

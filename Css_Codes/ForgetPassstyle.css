@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body {
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)), url("https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/60107f9c58f4bb476b10caa8_6002086f72b72769e701e207_online-booking-system.jpeg");
+    background-size: cover;
+    background-position: center;
+}
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    max-width: 430px;
+    width: 100%;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+.container .form {
+    padding: 2rem;
+}
+.form header {
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.form input {
+    height: 60px;
+    width: 100%;
+    padding: 0 15px;
+    font-size: 15px;
+    margin-bottom: 1.3rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+.form input:focus {
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+.form a {
+    font-size: 14px;
+    color: #009579;
+    text-decoration: none;
+}
+.form a:hover {
+    text-decoration: underline;
+}
+.form input.button {
+    color: #fff;
+    background: #009579;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 1.7rem;
+    cursor: pointer;
+    transition: 0.4s;
+}
+.form input.button:hover {
+    background: #006653;
+}
+
+.password-input {
+    position: relative;
+    width: 100%;
+}
+
+.password-input input[type="password"] {
+    padding-right: 30px; 
+}
+
+.password-input i {
+    position: absolute;
+    right: 10px;
+    top: 40%;
+    transform: translateY(-50%);
+    color: #999; 
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#back {
+    width: 100px;
+    padding: 15px 0;
+    text-align: center;
+    margin: 20px 10px;
+    border-radius: 25px;
+    font-weight: bold;
+    border: 2px solid #009688;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    position: fixed;
+    left: 30px;
+    top: 30px;
+}
+#back i {
+    color: #fff;
+    font-size: 20px;
+}
+#spanBtn {
+    background: #009688;
+    height: 100%;
+    width: 0%;
+    border-radius: 25px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: 0.5s;
+}
+#back:hover span {
+    width: 100%;
+}
+#back:hover {
+    border: none;
+}

@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)), url("https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/60107f9c58f4bb476b10caa8_6002086f72b72769e701e207_online-booking-system.jpeg");
+    background-size: cover;
+    background-position: center;
+}
+.container{
+    position: relative;
+    max-width: 900px;
+    width: 100%;
+    border-radius: 6px;
+    padding: 30px;
+    margin: 0 15px;
+    background-color: #fff;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+.container header{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+.container header::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 3px;
+    width: 27px;
+    border-radius: 8px;
+    background-color: #009688;
+}
+.container form{
+    position: relative;
+    margin-top: 16px;
+    min-height: 490px;
+    background-color: #fff;
+    overflow: hidden;
+    overflow-y: auto; /* Add this line */
+}
+.container form .form{
+    position: absolute;
+    background-color: #fff;
+    transition: 0.3s ease;
+}
+
+form.secActive .form.first{
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100%);
+}
+.container form .title{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+.container form .fields{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.container form .details.ID .fields .input-field label {
+  font-size: 14px;
+}
+
+.input-field.terms input[type="checkbox"] {
+    width: auto;
+    margin-left: -425px;
+    margin-top: 65px;
+    transform: scale(1.4);
+    position: absolute;
+}
+
+.input-field #labelterms {
+    font-size: 14px;
+    position: absolute;
+    margin-left: -400px;
+    margin-top: 75px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    margin: 8px 0;
+    resize: vertical; 
+}
+
+form .fields .input-field{
+    display: flex;
+    width: 48%;
+    flex-direction: column;
+    margin: 4px 0;
+}
+.input-field label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+.input-field label p {
+    display: inline;
+    margin-left: 5px;
+    font-size: 11px;
+    color: #707070;
+}
+
+.input-field input, select{
+    outline: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    padding: 0 15px;
+    height: 42px;
+    margin: 8px 0;
+}
+.input-field input :focus,
+.input-field select:focus{
+    box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+}
+.input-field select,
+.input-field input[type="date"], .input-field input[type="time"]{
+    color: #707070;
+}
+.input-field input[type="date"]:valid{
+    color: #333;
+}
+.input-field input[type="time"]:valid{
+  color: #333;
+}
+
+
+.container form button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    max-width: 200px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 5px;
+    margin: 25px 0;
+    background-color: #009688;
+    transition: all 0.3s linear;
+    cursor: pointer;
+    margin-top: 50px;
+}
+
+.container form button a {
+    text-decoration: none;
+    color: white;
+}
+
+form button:hover{
+    background-color: green;
+}
+form button i{
+    margin: 0 6px;
+}
+form .buttons{
+    display: flex;
+    align-items: center;
+}
+form .buttons button{
+    margin-right: 14px;
+}
+
+@media (max-width: 750px) {
+    .container form{
+        overflow-y: scroll;
+    }
+    .container form::-webkit-scrollbar{
+       display: none;
+    }
+    form .fields .input-field{
+        width: calc(100% / 2 - 15px);
+    }
+}
+
+@media (max-width: 550px) {
+    form .fields .input-field{
+        width: 100%;
+    }
+}
+
+#back{
+  width:100px;
+  padding: 15px 0;
+  text-align:center;
+  margin:20 px 10 px;
+  border-radius:25px;
+  font-weight:bold;
+  border: 2px solid #009688;
+  background: transparent;
+  color:#fff;
+  cursor: pointer;
+  overflow: hidden;
+  position: fixed;
+  left: 30px;
+  top: 30px;
+}
+#back i {
+  color: #fff;
+  font-size: 20px;
+}
+#spanBtn{
+  background: #009688;
+  height: 100%;
+  width: 0%;
+  border-radius: 25px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: -1;
+  transition: 0.5s;
+}
+#back:hover span{
+  width: 100%;
+}
+#back:hover{
+  border: none;
+}

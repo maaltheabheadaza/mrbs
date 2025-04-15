@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../Css_Codes/Homepagestyle.css">
+  <title>Homepage</title>
+</head>
+<body>
+  <div class="banner">
+    <div class="navbar">
+      <h1 class="logo"><a href="#">RBMS</a></h1>
+      <ul>
+        <li><a href="../Html_Codes/Homepage.html">Home</a></li>
+        <li><a href="../Html_Codes/AboutPage.html">About</a></li>
+        <li><a href="../Html_Codes/ContactPage.html">Contact</a></li>
+        <li>
+          <a href="#"><i class="fas fa-bars"></i></a>
+          <div class="dropdown-menu">
+            <a href="../Html_Codes/adminver.html">Admin</a>
+            <a href="#">Settings</a>
+            <a href="#">Exit</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <h1>WELCOME TO R.B.M.S</h1>
+      <p>Resource Booking Management System</p>
+      <p>RBMS simplifies resource reservations in Albuera, Leyte. 
+        Easily book community halls, equipment, and services with just a 
+        few clicks. <br>Welcome to a streamlined booking experience!
+      </p>
+      <div>
+        <button type="button"><span></span><a href="../Html_Codes/Userlogin.html" style="text-decoration: none; color:white">Book Now</a></button>
+      </div>
+    </div>
+  </div>
+  
+  <section class="footer">
+    <div class="social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-snapchat"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+    </div>
+    <ul class="list">
+      <li>
+        <a href="../Html_Codes/Homepage.html">Home</a>
+      </li>
+      <li>
+        <a href="../Html_Codes/AboutPage.html">About</a>
+      </li>
+      <li>
+        <a href="../Html_Codes/ContactPage.html">Contact</a>
+      </li>
+      <li>
+        <a href="#">Privacy Policy</a>
+      </li>
+      <li>
+        <a href="#">FAQs</a>
+      </li>
+    </ul>
+    <p class="copyright">&copy;AAJBangalao@BSIT-2B</p>
+  </section>
+
+  <div class="overlay">
+    <div class="otp-form">
+      
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $(".navbar ul li:last-child").mouseover(function(){
+        $(".dropdown-menu").show();
+      });
+
+      $(".dropdown-menu").mouseout(function(){
+        $(this).hide();
+      });
+    });
+
+    
+</script>
+</body>
+</html>

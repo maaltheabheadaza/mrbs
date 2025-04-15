@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../Css_Codes/Userloginstyle.css">    
+    <title>Get Started Now</title> 
+</head>
+<body>
+    <div>
+        <button type="button" id="back"><span id="spanBtn"></span><a href="../Html_Codes/Homepage.html"><i class="fas fa-arrow-left"></i></a></button>
+      </div>
+    <div class="container">
+        <div class="forms">
+            <div class="form login">
+                <span class="title">SIGN IN</span>
+                <form action="../Php_Codes/user_login.php" method="POST"> 
+                    <div class="input-field">
+                        <input type="text" name="email" placeholder="Enter your email" required> 
+                        <i class="uil uil-envelope icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" name="password" class="password" placeholder="Enter your password" required> 
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <input type="checkbox" id="logCheck">
+                            <label for="logCheck" class="text">Remember me</label>
+                        </div>
+                        
+                        <a href="../Php_Codes/ForgetPass.php" class="text">Forgot password?</a>
+                    </div>
+                    <div class="input-field button">
+                        <input type="submit" value="Login"> 
+                    </div>
+                </form>
+                <div class="login-signup">
+                    <span class="text">Not a member?
+                        <a href="#" class="text signup-link">Signup Now</a>
+                    </span>
+                </div>
+            </div>
+
+
+            <!-- Registration Form -->
+            <div class="form signup">
+                <span class="title">Registration</span>
+                <form action="../Php_Codes/user_registration.php" method="POST" enctype="multipart/form-data">
+
+                    <div class="input-field">
+                        <input type="text" name="fullname" placeholder="Enter your Name" required>
+                        <i class="uil uil-user"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="file" name="profile_image" accept="image/*" required>
+                        <i class="uil uil-image icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" name="email" placeholder="Enter your Email" required>
+                        <i class="uil uil-envelope icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" name="contact_number" placeholder="Enter your Contact Number" required>
+                        <i class="uil uil-phone icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" name="full_address" placeholder="Enter your Address" required>
+                        <i class="uil uil-home icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" name="valid_password" class="password" placeholder="Create a password" required>
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" name="confirm_password" class="password" placeholder="Confirm a password" required>
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <input type="checkbox" id="termCon" required>
+                            <label for="termCon" class="text">I accepted all terms and conditions</label>
+                        </div>
+                    </div>
+                    <div class="input-field button">
+                        <input type="submit" value="Signup">
+                    </div>
+                </form>
+                <div class="login-signup">
+                    <span class="text">Already a member?
+                        <a href="#" class="text login-link">Login Now</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+     <script src="../Javascript_Codes/Userloginscript.js"></script> 
+</body>
+</html>

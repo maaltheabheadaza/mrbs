@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../Css_Codes/Aboutpagestyle.css">
+    <title>About Us</title>
+</head>
+<body>
+    <div class="banner">
+        <div class="navbar">
+          <h1 class="logo"><a href="#">RBMS</a></h1>
+          <ul>
+            <li><a href="../Html_Codes/Homepage.html">Home</a></li>
+            <li><a href="../Html_Codes/AboutPage.html">About</a></li>
+            <li><a href="../Html_Codes/ContactPage.html">Contact</a></li>
+            <li><a href="#"><i class="fas fa-bars"></i></a>
+                <div class="dropdown-menu">
+                    <a href="../Html_Codes/adminver.html">Admin</a>
+                    <a href="#">Settings</a>
+                    <a href="#">Exit</a>
+                </div>
+            </li>
+          </ul>
+        </div>
+    <section id="about">
+        <div class="about-text">
+            <h1>About Us</h1>
+                <h2>Resource Booking Management System</h2>
+                <br>
+                <p>Welcome to the Resource Booking Management System for the Municipality of Albuera, Leyte! 
+                    Our system is designed to make booking facilities within Albuera easier and more convenient for residents. 
+                    Whether you're planning a community event, a sports tournament, or a gathering, our system allows you to reserve covered courts, 
+                    community centers, or vehicles with ease. By streamlining the reservation process, we aim to reduce conflicts, 
+                    improve resource utilization, and ultimately enhance the overall experience of organizing events or activities in our municipality. 
+                    Join us in making booking resources in Albuera simpler and more efficient!</p>
+            <button>View More Details</button>
+        </div>
+          <div class="about-model">
+              <img alt="model" src="../Images/Screenshot .png"/>	
+          </div>
+    </section>
+
+    <section class="footer">
+        <div class="social">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-snapchat"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+        </div>
+          <ul class="list">
+              <li>
+              <a href="../Html_Codes/Homepage.html">Home</a>
+              </li>
+              <li>
+              <a href="../Html_Codes/AboutPage.html">About</a>
+              </li>
+              <li>
+              <a href="../Html_Codes/ContactPage.html">Contact</a>
+              </li>
+              <li>
+              <a href="#">Privacy Policy</a>
+              </li>
+              <li>
+              <a href="#">FAQs</a>
+              </li>
+          </ul>
+        <p class="copyright">&copy;AAJBangalao@BSIT-2B</p>
+      </section>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+          $(document).ready(function(){
+            $(".navbar ul li:last-child").mouseover(function(){
+            $(".dropdown-menu").show();
+              });
+
+            $(".dropdown-menu").mouseout(function(){
+            $(this).hide();
+              });
+          });
+        </script>
+</body>
+</html>
