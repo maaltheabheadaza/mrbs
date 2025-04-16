@@ -5,22 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="../Css_Codes/Userloginstyle.css">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../Css_Codes/adminloginstyle.css">    
     <title>Get Started Now</title> 
 </head>
 <body>
-    <div>
-        <button type="button" id="back"><span id="spanBtn"></span><a href="../Html_Codes/Homepage.html"><i class="fas fa-arrow-left"></i></a></button>
-      </div>
     <div class="container">
+        
         <div class="forms">
             <div class="form login">
+                <i class="fa-solid fa-gears gear-icon"></i>
+                <span class="panel">
+                    <span class="first-letter">A</span>DMIN
+                    <span class="first-letter">P</span>ANEL 
+                    <span class="first-letter">L</span>OGIN
+                </span>
+                
+                
                 <span class="title">SIGN IN</span>
                 <form action="../Php_Codes/user_login.php" method="POST"> 
                     <div class="input-field">
                         <input type="text" name="email" placeholder="Enter your email" required> 
-                        <i class="uil uil-envelope icon"></i>
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
                     <div class="input-field">
                         <input type="password" name="password" class="password" placeholder="Enter your password" required> 
@@ -68,10 +75,7 @@
                         <input type="text" name="contact_number" placeholder="Enter your Contact Number" required>
                         <i class="uil uil-phone icon"></i>
                     </div>
-                    <div class="input-field">
-                        <input type="text" name="full_address" placeholder="Enter your Address" required>
-                        <i class="uil uil-home icon"></i>
-                    </div>
+                    
                     <div class="input-field">
                         <input type="password" name="valid_password" class="password" placeholder="Create a password" required>
                         <i class="uil uil-lock icon"></i>
