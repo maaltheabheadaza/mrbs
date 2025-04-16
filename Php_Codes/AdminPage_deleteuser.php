@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" type="text/css" href="../Css_Codes/AdminPage_deleteuserstyle.css">
+    <link rel="stylesheet" type="text/css" href="../Css_Codes/AdminPage_searchuserstyle.css">
   </head>
   <body>
     <nav class="sidebar">
@@ -34,14 +35,12 @@
                 User History
               </div>
               <li class="item">
-                <a href="../Php_Codes/AdminPage_viewuser.php">View Users</a>
-              </li>
-              <li class="item">
-                <a href="#">Delete Users</a>
-              </li>
-              <li class="item">
-                <a href="../Php_Codes/AdminPage_searchuser.php">Search Users</a>
-              </li>
+                            <a href="../Php_Codes/AdminPage_viewuser.php">User List</a>
+                        </li>
+                        <li class="item">
+                            <a href="../Php_Codes/AdminPage_deleteuser.php">Manage Users</a>
+                        </li>
+             
             </ul>
           </li>
           <li class="item">
@@ -91,6 +90,11 @@
             <i class="uil uil-trash"></i>
             <span class="text" id="text1">Delete User</span>
         </div> 
+
+        <div class="search-box">
+                <a href="#"><i class="uil uil-search"></i></a>
+                <input type="text" id="searchInput" placeholder="Search here...">
+        </div>
          
 
         <table border="1" id="userTable" style="text-align:center; border-color:#000;">
@@ -104,7 +108,7 @@
               <th>Action</th>
             </tr>
             <?php
-            $conn = mysqli_connect("localhost","root","","user_info");
+            $conn = mysqli_connect("localhost","root","My_Chaeyoung01!","user_info");
             if($conn->connect_error) {
               die("Connection Failed: ".$conn->connect_error);
             }
@@ -136,7 +140,7 @@
           </table>
 
     </main>
-
+    <script src="../Javascript_Codes/AdminPage_searchuserscript.js"></script>
     <script src="../Javascript_Codes/AdminPage_deleteuserscript.js"></script>
   </body>
 </html>
