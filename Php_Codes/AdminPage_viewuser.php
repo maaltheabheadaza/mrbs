@@ -37,10 +37,10 @@
                 <a href="#">View Users</a>
               </li>
               <li class="item">
-                <a href="../Php_Codes/AdminPage_deleteuser.php">Delete Users</a>
+                  <a href="../Php_Codes/AdminPage_viewuser.php">User List</a>
               </li>
               <li class="item">
-                <a href="../Php_Codes/AdminPage_searchuser.php">Search Users</a>
+                  <a href="../Php_Codes/AdminPage_deleteuser.php">Manage Users</a>
               </li>
             </ul>
           </li>
