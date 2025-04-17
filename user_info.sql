@@ -262,7 +262,14 @@ INSERT INTO `users` (`id`, `fullname`, `email`, `contact_number`, `full_address`
 --
 -- Indexes for dumped tables
 --
-
+CREATE TABLE `admin` (
+  `id` int(100) NOT NULL,
+  `fullname` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `contact_number` varchar(50) NOT NULL,
+  `valid_password` varchar(100) NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
 -- Indexes for table `bookingform1`
 --
