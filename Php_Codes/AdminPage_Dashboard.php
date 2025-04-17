@@ -41,8 +41,11 @@ $profileImage = $_SESSION['admin']['profile_image'];
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Administration Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"/>
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -221,7 +224,7 @@ $profileImage = $_SESSION['admin']['profile_image'];
                   <a href="../Php_Codes/AdminPage_messages.php">Messages</a>
                 </li>
                 <li class="item bottom1">
-                    <a href="#">Settings</a>
+                    <a href="admin_logout.php"><i class="fa-solid fa-arrow-right-from-bracket">  </i></i>  Log out</a>
                 </li>
                 <li class="item bottom2">
                     <a href="../Html_Codes/HomePage.html">Logout</a>

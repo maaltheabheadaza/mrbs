@@ -20,9 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
-        $_SESSION['email'] = $email; 
-        header("Location: ../Php_Codes/AdminPage_dashboard.php"); 
-        exit(); 
+        $adminData = $result->fetch_assoc();
+        $_SESSION['admin'] = $adminData;
+        header("Location: ../Php_Codes/AdminPage_dashboard.php");
+        exit();
     } else {
         echo '<script>alert("Incorrect email or password. Please try again.");</script>';
         echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
