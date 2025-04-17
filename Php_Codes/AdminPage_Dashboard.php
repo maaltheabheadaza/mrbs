@@ -1,4 +1,17 @@
 <?php
+//session
+
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: ../Html_Codes/adminlogin.html");
+    exit();
+}
+$admin = $_SESSION['admin']; 
+$profileImage = $_SESSION['admin']['profile_image'];
+
+
+
+
   $conn = mysqli_connect("localhost", "root", "", "user_info");
   if ($conn->connect_error) {
     die("Connection Failed: " . $conn->connect_error);
@@ -160,7 +173,7 @@
         <a href="#" class="logo">RBMS</a>
         <div class="menu-content">
             <ul class="menu-items">
-                <div class="menu-title">Almackie Bangalao</div>
+            <div class="menu-title"><?php echo htmlspecialchars($admin['fullname']); ?></div>
                 <li class="item">
                     <a href="#">Dashboard</a>
                 </li>
@@ -459,11 +472,15 @@
 
           <div class="profile-card">
             <div class="image">
-              <img src="../Images/profile.jpg" alt="" class="profile-img" />
+            <img src="<?php echo $profileImage; ?>" alt="" class="profile-img" />
+
             </div>
+          
+
             <div class="text-data">
-              <span class="name">Almackie Bangalao</span>
-              <span class="job">Administrator | Student</span>
+              <div class="name"><?php echo htmlspecialchars($admin['fullname']); ?></div>
+
+              <span class="job">Administrator</span>
             </div>
             <div class="media-buttons">
               <a href="#" style="background: #4267b2" class="link">

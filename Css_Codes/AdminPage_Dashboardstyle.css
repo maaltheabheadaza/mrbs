@@ -247,6 +247,7 @@
     font-weight: 500;
 }
 .text-data .job {
+    color: gray;
     font-size: 15px;
     font-weight: 400;
 }
