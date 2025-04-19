@@ -169,9 +169,113 @@ $profileImage = $_SESSION['admin']['profile_image'];
         height: 30%;
         top: 145%;
       }
+
+      .success-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        text-align: center;
+      }
+      .success-modal.show {
+        display: block;
+      }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 999;
+      }
+      .modal-overlay.show {
+        display: block;
+      }
+      .logout-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+      }
+      .logout-modal.show {
+        display: block;
+      }
+      .logout-modal h2 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+      .logout-modal p {
+        margin-bottom: 20px;
+        color: #666;
+      }
+      .logout-modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .logout-modal-buttons button {
+        padding: 8px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .logout-modal-buttons .cancel-btn {
+        background-color: #e0e0e0;
+        color: #333;
+      }
+      .logout-modal-buttons .confirm-btn {
+        background-color: #dc3545;
+        color: white;
+      }
     </style>
   </head>
   <body>
+    <?php if (isset($_GET['login_success'])): ?>
+    <div class="modal-overlay show"></div>
+    <div class="success-modal show">
+        <h2>Welcome, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</h2>
+        <p>You have successfully logged in!</p>
+        <button onclick="closeModal()" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">OK</button>
+    </div>
+    <script>
+        function closeModal() {
+            document.querySelector('.success-modal').classList.remove('show');
+            document.querySelector('.modal-overlay').classList.remove('show');
+            // Remove the login_success parameter from URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
+    <?php endif; ?>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutOverlay"></div>
+    <div class="logout-modal" id="logoutModal">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <div class="logout-modal-buttons">
+            <button class="cancel-btn" onclick="closeLogoutModal()">Cancel</button>
+            <button class="confirm-btn" onclick="confirmLogout()">Logout</button>
+        </div>
+    </div>
+
     <nav class="sidebar">
         <a href="#" class="logo">RBMS</a>
         <div class="menu-content">
@@ -224,10 +328,7 @@ $profileImage = $_SESSION['admin']['profile_image'];
                   <a href="../Php_Codes/AdminPage_messages.php">Messages</a>
                 </li>
                 <li class="item bottom1">
-                    <a href="admin_logout.php"><i class="fa-solid fa-arrow-right-from-bracket">  </i></i>  Log out</a>
-                </li>
-                <li class="item bottom2">
-                    <a href="../Html_Codes/HomePage.html">Logout</a>
+                    <a href="#" onclick="showLogoutModal(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
                 </li>
             </ul>
         </div>
@@ -556,6 +657,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renumberAndSortIDs();
 });
+    </script>
+    <script>
+        function showLogoutModal() {
+            document.getElementById('logoutModal').classList.add('show');
+            document.getElementById('logoutOverlay').classList.add('show');
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('show');
+            document.getElementById('logoutOverlay').classList.remove('show');
+        }
+
+        function confirmLogout() {
+            window.location.href = 'admin_logout.php';
+        }
     </script>
 </body>
 </html>

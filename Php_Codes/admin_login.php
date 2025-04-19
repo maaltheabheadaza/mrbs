@@ -22,7 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows == 1) {
         $adminData = $result->fetch_assoc();
         $_SESSION['admin'] = $adminData;
-        header("Location: ../Php_Codes/AdminPage_dashboard.php");
+        $_SESSION['admin_name'] = $adminData['name'];
+        header("Location: ../Php_Codes/AdminPage_dashboard.php?login_success=1");
         exit();
     } else {
         echo '<script>alert("Incorrect email or password. Please try again.");</script>';

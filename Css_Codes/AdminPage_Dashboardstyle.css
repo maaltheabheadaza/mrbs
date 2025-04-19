@@ -62,7 +62,8 @@
 }
 
 .item.bottom1 {
-    margin-top: 115%;
+    position: relative;
+    margin-top: 0;
 }
 
 .item a {
