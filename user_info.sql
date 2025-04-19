@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 15, 2025 at 11:31 AM
+-- Generation Time: Apr 19, 2025 at 09:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,28 @@ SET time_zone = "+00:00";
 --
 -- Database: `user_info`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin`
+--
+
+CREATE TABLE `admin` (
+  `id` int(100) NOT NULL,
+  `fullname` varchar(200) NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `contact_number` varchar(50) NOT NULL,
+  `valid_password` varchar(100) NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`id`, `fullname`, `email`, `contact_number`, `valid_password`, `profile_image`) VALUES
+(0, 'Admin 1', 'ma.altheabhea.daza@gmail.com', '9703497121', 'admin123', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1745046621/admin_profiles/hdrgn1ioqwdsn1m3pkwt.jpg');
 
 -- --------------------------------------------------------
 
@@ -262,14 +284,7 @@ INSERT INTO `users` (`id`, `fullname`, `email`, `contact_number`, `full_address`
 --
 -- Indexes for dumped tables
 --
-CREATE TABLE `admin` (
-  `id` int(100) NOT NULL,
-  `fullname` varchar(200) NOT NULL,
-  `email` varchar(200) NOT NULL,
-  `contact_number` varchar(50) NOT NULL,
-  `valid_password` varchar(100) NOT NULL,
-  `profile_image` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for table `bookingform1`
 --

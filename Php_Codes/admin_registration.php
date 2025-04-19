@@ -25,7 +25,7 @@
     $imageUrl = null;
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
         $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
-            'folder' => 'user_profiles'
+            'folder' => 'admin_profiles'
         ]);
         $imageUrl = $uploadResult['secure_url'];
     }
