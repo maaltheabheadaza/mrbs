@@ -50,7 +50,7 @@
                                 // Include the PHP script to fetch options
                                 $servername = "localhost"; // Change to your server name
                                 $username = "root";        // Change to your database username
-                                $password = "My_Chaeyoung01!";            // Change to your database password
+                                $password = "";            // Change to your database password
                                 $dbname = "user_info"; // Change to your database name
 
                                 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -118,19 +118,27 @@
     </div>
 
     <script>
-      const form = document.querySelector("form"),
-        submitBtn = form.querySelector(".submit"),
-        allInput = form.querySelectorAll(".first input");
+        const form = document.querySelector("form");
+        const allInput = form.querySelectorAll(".first input");
 
-        submitBtn.addEventListener("click", () => {
+        form.addEventListener("submit", function(e) {
+            let isValid = true;
+            
+            // Check if all required fields are filled
             allInput.forEach(input => {
-                if(input.value != ""){
-                    form.classList.add('secActive');
-                }else{
-                    form.classList.remove('secActive');
+                if(input.hasAttribute('required') && !input.value) {
+                    isValid = false;
                 }
-            })
-        })
+            });
+
+            if(isValid) {
+                form.classList.add('secActive');
+            } else {
+                e.preventDefault();
+                form.classList.remove('secActive');
+                alert("Please fill in all required fields.");
+            }
+        });
     </script>
 </body>
 </html>

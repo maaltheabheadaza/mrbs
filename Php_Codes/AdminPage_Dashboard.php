@@ -251,7 +251,7 @@ $profileImage = $_SESSION['admin']['profile_image'];
     <?php if (isset($_GET['login_success'])): ?>
     <div class="modal-overlay show"></div>
     <div class="success-modal show">
-        <h2>Welcome, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</h2>
+        <h2>Welcome, <?php echo htmlspecialchars($admin['fullname']); ?>!</h2>
         <p>You have successfully logged in!</p>
         <button onclick="closeModal()" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">OK</button>
     </div>

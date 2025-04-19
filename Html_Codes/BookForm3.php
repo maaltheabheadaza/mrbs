@@ -56,7 +56,7 @@
                                 <?php
                                 $servername = "localhost"; 
                                 $username = "root";       
-                                $password = "My_Chaeyoung01!";          
+                                $password = "";          
                                 $dbname = "user_info"; 
 
                                 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -134,20 +134,27 @@
     </div>
 
     <script>
-      const form = document.querySelector("form"),
-        submitBtn = form.querySelector(".submit"),
-        allInput = form.querySelectorAll(".first input");
+        const form = document.querySelector("form");
+        const allInput = form.querySelectorAll(".first input");
 
+        form.addEventListener("submit", function(e) {
+            let isValid = true;
+            
+            // Check if all required fields are filled
+            allInput.forEach(input => {
+                if(input.hasAttribute('required') && !input.value) {
+                    isValid = false;
+                }
+            });
 
-submitBtn.addEventListener("click", ()=> {
-    allInput.forEach(input => {
-        if(input.value != ""){
-            form.classList.add('secActive');
-        }else{
-            form.classList.remove('secActive');
-        }
-    })
-})
+            if(isValid) {
+                form.classList.add('secActive');
+            } else {
+                e.preventDefault();
+                form.classList.remove('secActive');
+                alert("Please fill in all required fields.");
+            }
+        });
     </script>
 </body>
 </html>
