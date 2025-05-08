@@ -106,7 +106,7 @@
         display: none; /* Initially hide the wrapper */
         position: fixed;
         width: 40%;
-        height: 40%;
+        height: 50%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -132,7 +132,7 @@
         width: 100%;
         height: 60px;
         outline: none;
-        padding: 0 17px;
+        padding: 10px 17px;
         font-size: 19px;
         border-radius: 5px;
         border: 1px solid #b3b2b2;
@@ -196,7 +196,13 @@
         
         background-color: #fff; 
       }
-    </style>
+      #userTable4 td.editable span {
+        border: 1px solid black;
+        width: 150px;
+        padding: 2px 4px;
+        display: inline-block;
+      }
+</style>
 
   </head>
   <body>
@@ -362,46 +368,49 @@
         <p>Add only if approved by the Municipality</p>
       </header>
       <form action="add_booking_preference1.php" method="POST">
-        <input type="text" name="booking_preference" placeholder="Add Booking Preference" required>
+        <input type="text" name="booking_preference" placeholder="Add Booking Preference" required><br><br>
+        <input type="text" name="per_hour" placeholder="Rate ( /per hour)" required>
         <input type="submit" id="button" value="Add Booking"></input>
       </form>
     </div>
 
     <div class="table-container1">
-        <table id="userTable4" border="1" style="text-align:center; border-color:#000;">
-        <tr>
-            <th>ID</th>
-            <th>Booking Preference</th>
-            <th>Action</th>
-        </tr>
+    <table id="userTable4" border="1" style="text-align:center; border-color:#000;">
+  <tr>
+    <th>ID</th>
+    <th>Booking Preference</th>
+    <th>Rate (₱) /Per Hour</th>
+    <th>Action</th>
+  </tr>
 
-        <?php
-        $conn = mysqli_connect("localhost","root","","user_info");
-        if($conn->connect_error) {
-            die("Connection Failed: ".$conn->connect_error);
-        }
-        $sql = "SELECT id, preference from booking_preferences1";
-        $result = $conn->query($sql);
+  <?php
+  $conn = mysqli_connect("localhost", "root", "", "user_info");
+  if ($conn->connect_error) {
+      die("Connection Failed: " . $conn->connect_error);
+  }
+  $sql = "SELECT id, preference, per_hour FROM booking_preferences1";
+  $result = $conn->query($sql);
 
-        if($result->num_rows>0) {
-          while($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>".$row["id"]."</td>
-                    <td>".$row["preference"]."</td>
-                    <td>
-                        <a href='#' class='delete-row' data-id='".$row["id"]."'><i class='fas fa-trash-alt'></i></a>
-                    </td>
-                  </tr>";
-        }
-            echo"</table>";
-        }
-        else{
-            echo"0 result";
-        }
+  if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+          echo "<tr data-id='" . $row["id"] . "'>
+                  <td>" . $row["id"] . "</td>
+                  <td class='editable' data-field='preference'><span>" . $row["preference"] . "</span></td>
+                  <td class='editable' data-field='per_hour'><span>" . $row["per_hour"] . "</span></td>
+                  <td>
+                      <a href='#' class='save-btn' style='margin-right:15px;'><i class='fa-solid fa-floppy-disk'></i></a>
+                      <a href='#' class='delete-row' data-id='" . $row["id"] . "'><i class='fas fa-trash-alt'></i></a>
+                  </td>
+                </tr>";
+      }
+  } else {
+      echo "<tr><td colspan='4'>0 result</td></tr>";
+  }
 
-        $conn->close();
-        ?>
-    </table>
+  $conn->close();
+  ?>
+</table>
+
 
       
     
@@ -450,6 +459,37 @@
         }
     });
 });
+
+document.querySelectorAll('#userTable4 tr[data-id]').forEach(row => {
+  row.querySelectorAll('.editable').forEach(cell => {
+    cell.addEventListener('click', () => {
+      if (!cell.hasAttribute('contenteditable')) {
+        cell.setAttribute('contenteditable', 'true');
+        cell.focus();
+        row.querySelector('.save-btn').style.display = 'inline-block';
+      }
+    });
+  });
+
+  row.querySelector('.save-btn').addEventListener('click', () => {
+    const id = row.dataset.id;
+    const preference = row.querySelectorAll('.editable')[0].innerText.trim();
+    const perHour = row.querySelectorAll('.editable')[1].innerText.trim();
+
+    fetch('update_preference1.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, preference, per_hour: perHour })
+    })
+    .then(res => res.text())
+    .then(msg => {
+    
+      row.querySelectorAll('.editable').forEach(cell => cell.removeAttribute('contenteditable'));
+      row.querySelector('.save-btn').style.display = 'none';
+    });
+  });
+});
+
     </script>
   </body>
 </html>

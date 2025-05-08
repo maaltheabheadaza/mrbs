@@ -1,31 +1,25 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['booking_preference'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['booking_preference']) && isset($_POST['per_hour'])) {
     $preference = $_POST['booking_preference'];
+    $per_hour = intval($_POST['per_hour']);
 
     $conn = mysqli_connect("localhost", "root", "", "user_info");
-    if ($conn->connect_error) {
-        die("Connection Failed: " . $conn->connect_error);
+
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
     }
 
-    $stmt = $conn->prepare("INSERT INTO booking_preferences1 (preference) VALUES (?)");
-    $stmt->bind_param("s", $preference);
+    $sql = "INSERT INTO booking_preferences1 (preference, per_hour) VALUES (?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "si", $preference, $per_hour);
 
-    if ($stmt->execute()) {
-        echo "<script>
-                alert('New booking created successfully.');
-                window.location.href = 'AdminPage_bookform1.php';
-              </script>";
+    if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('Booking preference added successfully'); window.location.href='../Php_Codes/AdminPage_bookform1.php';</script>";
     } else {
-        echo "<script>
-                alert('Error: " . $stmt->error . "');
-                window.location.href = 'AdminPage_bookform1.php';
-              </script>";
+        echo "Error: " . mysqli_error($conn);
     }
-    
-    $stmt->close();
-    $conn->close();
-} else {
-    header("Location: AdminPage_bookform1.php");
-    exit();
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
 }
 ?>
