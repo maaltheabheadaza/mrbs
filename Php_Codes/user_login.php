@@ -15,6 +15,18 @@ if ($conn->connect_error) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $captcha = $_POST['g-recaptcha-response'];
+
+    // Verify CAPTCHA
+    $secretKey = "6LdV3zsrAAAAAOl8Or7LkwglfT-IHAABjQG7pwjJ";
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$captcha");
+    $responseKeys = json_decode($response, true);
+
+    if (!$responseKeys["success"]) {
+        echo '<script>alert("CAPTCHA verification failed. Please try again.");</script>';
+        echo '<script>window.location.href = "../Html_Codes/Userlogin.html";</script>';
+        exit();
+    }
 
     $sql = "SELECT * FROM users WHERE email='$email' AND valid_password='$password'";
     $result = $conn->query($sql);
