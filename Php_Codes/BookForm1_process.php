@@ -28,6 +28,9 @@ function sendEmail($to, $subject, $message) {
     if (file_exists($tokenPath)) {
         $accessToken = json_decode(file_get_contents($tokenPath), true);
         $client->setAccessToken($accessToken);
+    } else {
+        error_log("Token file not found: $tokenPath");
+        return false;
     }
     
     try {
@@ -41,7 +44,7 @@ function sendEmail($to, $subject, $message) {
         $rawMessage .= base64_encode($message);
         
         $msg = new Message();
-        $msg->setRaw(base64_encode($rawMessage));
+        $msg->setRaw(strtr(base64_encode($rawMessage), ['+' => '-', '/' => '_'])); // Correct encoding for Gmail API
         
         $service->users_messages->send('me', $msg);
         return true;
