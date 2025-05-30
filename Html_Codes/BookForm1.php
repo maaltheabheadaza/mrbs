@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../Css_Codes/BookForm1style.css">
+    <link rel="icon" href="../Images/icon.png" type="image/png">
     <title>Community Halls | Centers Booking Form</title>
 </head>
 <body>
@@ -172,6 +173,20 @@
         async function validateDates() {
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
+            const startTime = document.querySelector('input[name="event_time_start"]').value;
+            const endTime = document.querySelector('input[name="event_time_end"]').value;
+
+            // Check if end date is before start date
+            if (startDate && endDate && startDate > endDate) {
+                alert("End date must be after start date");
+                return false;
+            }
+
+            // If dates are the same, check if end time is after start time
+            if (startDate === endDate && startTime && endTime && startTime >= endTime) {
+                alert("End time must be after start time");
+                return false;
+            }
 
             if (startDate && endDate) {
                 const [startHoliday, endHoliday] = await Promise.all([

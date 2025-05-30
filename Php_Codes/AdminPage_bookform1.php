@@ -17,6 +17,7 @@ $admin = $_SESSION['admin'];
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" href="../Css_Codes/AdminPage_bookform1style.css">
+    <link rel="icon" href="../Images/admin.png" type="image/png">
 
     <style>
       
@@ -31,6 +32,8 @@ $admin = $_SESSION['admin'];
         position: absolute;
         top: 25%;
         left: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       table {
@@ -40,16 +43,22 @@ $admin = $_SESSION['admin'];
         position: absolute;
         top: 0;
         left: 0;
-        border: none; 
+        width: 100%;
+        border: 1px solid #dee2e6;
       }
 
       th, td {
         text-align: center;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
       }
       thead th {
         position: sticky; 
         top: 0;
-        background-color: #fff; 
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
       }
 
       .BotSpace {
@@ -181,6 +190,8 @@ $admin = $_SESSION['admin'];
         position: absolute;
         top: 105%;
         left: 35px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       #UserTable4 {
@@ -189,19 +200,23 @@ $admin = $_SESSION['admin'];
         margin-right: auto; 
         top: 0;
         left: 0;
-        border: none;
         width: 100%;
+        border: 1px solid #dee2e6;
       }
 
       #UserTable4 th, td {
         text-align: center;
-        padding: 10px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
       }
       #UserTable4 thead th {
         position: sticky; 
-        padding: 10px;
+        padding: 12px 15px;
         top: 0;
-        background-color: #fff; 
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
       }
       #userTable4 td.editable span {
         border: 1px solid black;
@@ -458,7 +473,7 @@ $admin = $_SESSION['admin'];
             <span class="text" id="text3">Add Booking Preferences</span>
         </div>
 
-        <button id="addbook">Add Booking</button>
+        <button id="addbook">Add Booking Preference</button>
 
         <div class="wrapper" id="bookingFormWrapper">
       <header>
@@ -467,7 +482,7 @@ $admin = $_SESSION['admin'];
       </header>
       <form action="add_booking_preference1.php" method="POST">
         <input type="text" name="booking_preference" placeholder="Add Booking Preference" required><br><br>
-        <input type="submit" id="button" value="Add Booking"></input>
+        <input type="submit" id="button" value="Add Booking Preference"></input>
       </form>
     </div>
 

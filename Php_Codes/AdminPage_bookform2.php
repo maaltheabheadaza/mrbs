@@ -17,6 +17,7 @@ $admin = $_SESSION['admin'];
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" type="text/css" href="../Css_Codes/AdminPage_bookform2style.css">
+    <link rel="icon" href="../Images/admin.png" type="image/png">
     <style>
             
     .table-container {
@@ -435,7 +436,7 @@ $admin = $_SESSION['admin'];
             <span class="text" id="text3">Add Booking Preferences</span>
         </div>
 
-        <button id="addbook">Add Booking</button>
+        <button id="addbook">Add Booking Preference</button>
 
         <div class="wrapper" id="bookingFormWrapper">
       <header>
@@ -444,7 +445,7 @@ $admin = $_SESSION['admin'];
       </header>
       <form action="add_booking_preference2.php" method="POST">
         <input type="text" name="booking_preference" placeholder="Add Booking Preference" required>
-        <input type="submit" id="button" value="Add Booking"></input>
+        <input type="submit" id="button" value="Add Booking Preference"></input>
       </form>
     </div>
 

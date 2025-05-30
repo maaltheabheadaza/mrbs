@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" type="text/css" href="../Css_Codes/ForgetPassstyle.css">
+    <link rel="icon" href="../Images/admin.png" type="image/png">
     <title>Update Password</title>
 </head>
 <body>

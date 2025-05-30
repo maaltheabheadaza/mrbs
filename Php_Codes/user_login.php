@@ -47,32 +47,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     top: 0;
                     width: 100%;
                     height: 100%;
-                    background-color: rgba(0,0,0,0.4);
+                    background-color: rgba(0,0,0,0.7);
+                    backdrop-filter: blur(8px);
                 }
                 .modal-content {
-                    background-color: #fefefe;
+                    background: linear-gradient(145deg, #ffffff, #f8f8f8);
                     margin: 15% auto;
-                    padding: 20px;
-                    border: 1px solid #888;
+                    padding: 35px;
+                    border: none;
                     width: 80%;
                     max-width: 400px;
-                    border-radius: 8px;
+                    border-radius: 20px;
                     text-align: center;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+                    animation: modalFadeIn 0.6s ease-out;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .modal-content::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 5px;
+                    background: linear-gradient(90deg, #009688, #00bcd4);
+                }
+                @keyframes modalFadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
                 }
                 .success-icon {
-                    color: #4CAF50;
-                    font-size: 48px;
-                    margin-bottom: 20px;
+                    color: #009688;
+                    font-size: 65px;
+                    margin-bottom: 25px;
+                    animation: scaleIn 0.6s ease-out;
+                    text-shadow: 0 2px 10px rgba(0,150,136,0.2);
+                }
+                @keyframes scaleIn {
+                    0% {
+                        transform: scale(0);
+                        opacity: 0;
+                    }
+                    50% {
+                        transform: scale(1.2);
+                    }
+                    100% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
                 }
                 .modal-message {
-                    font-size: 18px;
+                    font-size: 26px;
                     margin-bottom: 20px;
-                    color: #333;
+                    color: #009688;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
+                    text-transform: uppercase;
                 }
                 .redirect-message {
-                    font-size: 14px;
+                    font-size: 16px;
                     color: #666;
+                    font-weight: 400;
+                    position: relative;
+                    padding-bottom: 15px;
+                }
+                .redirect-message::after {
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 50px;
+                    height: 3px;
+                    background: linear-gradient(90deg, #009688, #00bcd4);
+                    border-radius: 3px;
                 }
             </style>
         </head>

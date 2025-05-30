@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['booking_preference']))
 
     if ($stmt->execute()) {
         echo "<script>
-                alert('New booking created successfully.');
+                alert('New booking preference created successfully.');
                 window.location.href = 'AdminPage_bookform2.php';
               </script>";
     } else {

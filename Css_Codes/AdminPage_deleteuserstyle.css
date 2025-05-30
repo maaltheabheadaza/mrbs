@@ -207,3 +207,19 @@ thead th {
 tr.selected {
   background-color: rgba(0, 150, 136, 0.1);
 }
+
+.delete-row {
+    color: #dc3545;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 5px;
+    display: inline-block;
+}
+
+.delete-row:hover {
+    color: #c82333;
+}
+
+.delete-row i {
+    font-size: 18px;
+}

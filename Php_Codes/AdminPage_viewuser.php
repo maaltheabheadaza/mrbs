@@ -17,6 +17,7 @@ $admin = $_SESSION['admin'];
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" type="text/css" href="../Css_Codes/AdminPage_viewuserstyle.css">
+    <link rel="icon" href="../Images/admin.png" type="image/png">
     <style>
       .modal-overlay {
         display: none;
@@ -76,6 +77,35 @@ $admin = $_SESSION['admin'];
       .logout-modal-buttons .confirm-btn {
         background-color: #dc3545;
         color: white;
+      }
+      table {
+        width: 95%;
+        border-collapse: collapse;
+        margin: 20px auto;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      th, td {
+        text-align: center;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+      }
+
+      thead th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tbody tr:hover {
+        background-color: #f2f2f2;
       }
     </style>
   </head>

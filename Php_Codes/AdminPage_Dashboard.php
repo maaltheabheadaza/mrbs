@@ -50,6 +50,7 @@ $profileImage = $_SESSION['admin']['profile_image'];
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" type="text/css" href="../Css_Codes/AdminPage_Dashboardstyle.css">
+    <link rel="icon" href="../Images/admin.png" type="image/png">
     <style>
 
     .box1, .box2, .box3{
@@ -99,13 +100,18 @@ $profileImage = $_SESSION['admin']['profile_image'];
       
       #userTable1, #userTable2, #userTable3, th, td {
         text-align: center;
-        padding: 2px;
+        padding: 12px 15px;
         font-size: 14px;
+        border: 1px solid #ddd;
       }
       #userTable1, #userTable2, #userTable3, thead th {
         position: sticky; 
         top: 0;
         font-size: 14px;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
       }
 
       table {
@@ -118,19 +124,23 @@ $profileImage = $_SESSION['admin']['profile_image'];
           margin-right: auto; 
           position: relative;
           top: 113%;
-          border-radius: 15px; 
-          border: none; 
-          border: solid;
-          padding-bottom: 20px;
+          border-radius: 8px; 
+          border: 1px solid #dee2e6;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       th, td {
           text-align: center;
-          padding: 4px;
+          padding: 12px 15px;
+          border: 1px solid #dee2e6;
       }
       thead th {
           position: sticky; 
           top: 0;
+          background-color: #f8f9fa;
+          font-weight: 600;
+          color: #333;
+          border-bottom: 2px solid #dee2e6;
       }
 
       .title1 {

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../Css_Codes/BookForm3style.css">
+    <link rel="icon" href="../Images/icon.png" type="image/png">
    <title>Public Transportation Booking Form </title>
 </head>
 <body>
@@ -52,7 +53,7 @@
                         <div class="input-field">
                             <label>Vehicle Type</label>
                             <select name="vehicle_type" required>
-                                <option disabled selected>Select Halls | Centers</option>
+                                <option disabled selected>Select Vehicle Type</option>
                                 <?php
                                 $servername = "localhost"; 
                                 $username = "root";       
