@@ -133,11 +133,98 @@
         </form>
     </div>
 
+    <!-- Add Modal for Holiday Notification -->
+    <div id="holidayModal" class="modal" style="display: none; position: fixed; text-align: center; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+        <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 5px; position: relative;">
+            <span class="close" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2 style="color: #333; margin-bottom: 20px;">Holiday Notice</h2>
+            <p id="holidayMessage" style="margin-bottom: 20px; color: #666;"></p>
+            <button onclick="closeHolidayModal()" style="background-color: #009688; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Choose Another Date</button>
+        </div>
+    </div>
+
     <script>
         const form = document.querySelector("form");
         const allInput = form.querySelectorAll(".first input");
+        const pickUpDateInput = document.querySelector('input[name="pick_up_date"]');
+        const modal = document.getElementById("holidayModal");
+        const closeBtn = document.getElementsByClassName("close")[0];
+        const daysUseInput = document.querySelector('input[name="days_use"]');
 
-        form.addEventListener("submit", function(e) {
+        function showHolidayModal(message) {
+            document.getElementById("holidayMessage").innerHTML = message;
+            modal.style.display = "block";
+        }
+
+        function closeHolidayModal() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        closeBtn.onclick = closeHolidayModal;
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeHolidayModal();
+            }
+        }
+
+        async function checkHoliday(date) {
+            try {
+                const response = await fetch(`../Php_Codes/check_holiday.php?date=${date}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('Error checking holiday:', error);
+                return null;
+            }
+        }
+
+        async function checkDateRange(startDate, days) {
+            const dates = [];
+            for (let i = 0; i < days; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                dates.push(date.toISOString().split('T')[0]);
+            }
+
+            const holidayChecks = await Promise.all(dates.map(date => checkHoliday(date)));
+            const holidays = dates.filter((date, index) => holidayChecks[index].isHoliday)
+                .map((date, index) => ({
+                    date,
+                    name: holidayChecks[index].name,
+                    type: holidayChecks[index].type
+                }));
+
+            return holidays;
+        }
+
+        async function validateDates() {
+            const pickUpDate = pickUpDateInput.value;
+            const daysUse = parseInt(daysUseInput.value) || 0;
+
+            if (pickUpDate && daysUse > 0) {
+                const holidays = await checkDateRange(pickUpDate, daysUse);
+
+                if (holidays.length > 0) {
+                    let warningMessage = 'The following dates in your booking period are holidays:\n\n';
+                    holidays.forEach(holiday => {
+                        warningMessage += `${holiday.date}: ${holiday.name} (${holiday.type})\n`;
+                    });
+                    const proceed = confirm(warningMessage + '\nDo you want to proceed with the booking?');
+                    return proceed;
+                }
+            }
+            return true;
+        }
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
             let isValid = true;
             
             // Check if all required fields are filled
@@ -148,11 +235,48 @@
             });
 
             if(isValid) {
-                form.classList.add('secActive');
+                try {
+                    const holidayCheck = await validateDates();
+                    if (holidayCheck) {
+                        form.classList.add('secActive');
+                        form.submit();
+                    }
+                } catch (error) {
+                    console.error('Error during form submission:', error);
+                    alert('There was an error checking holiday dates. Please try again.');
+                }
             } else {
-                e.preventDefault();
                 form.classList.remove('secActive');
                 alert("Please fill in all required fields.");
+            }
+        });
+
+        // Add event listener to pick up date input to check for holidays on change
+        pickUpDateInput.addEventListener('change', async function() {
+            if (this.value) {
+                const holidayInfo = await checkHoliday(this.value);
+                if (holidayInfo.isHoliday) {
+                    showHolidayModal(`The selected pick-up date (${this.value}) is a ${holidayInfo.type}: ${holidayInfo.name}<br><br>Please select another date for your booking.`);
+                    this.value = ''; // Clear the date input
+                }
+            }
+        });
+
+        // Add event listener to days use input to check date range when changed
+        daysUseInput.addEventListener('change', async function() {
+            const pickUpDate = pickUpDateInput.value;
+            const daysUse = parseInt(this.value) || 0;
+
+            if (pickUpDate && daysUse > 0) {
+                const holidays = await checkDateRange(pickUpDate, daysUse);
+                if (holidays.length > 0) {
+                    let message = 'The following dates in your booking period are holidays:<br><br>';
+                    holidays.forEach(holiday => {
+                        message += `${holiday.date}: ${holiday.name} (${holiday.type})<br>`;
+                    });
+                    message += '<br>You may want to adjust your booking period.';
+                    showHolidayModal(message);
+                }
             }
         });
     </script>

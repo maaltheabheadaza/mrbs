@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/holiday_api.php';
 use Google\Client;
 use Google\Service\Gmail;
 use Google\Service\Gmail\Message;
@@ -68,6 +69,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $others = $_POST['others'];
     $bookingtime = date("Y-m-d H:i:s");
 
+    // Check for holidays
+    $holidayAPI = new HolidayAPI();
+    $isStartDateHoliday = $holidayAPI->isHoliday($event_date_start);
+    $isEndDateHoliday = $holidayAPI->isHoliday($event_date_end);
+    
+    $holidayWarning = "";
+    if ($isStartDateHoliday || $isEndDateHoliday) {
+        $holidayInfo = [];
+        if ($isStartDateHoliday) {
+            $startDateHolidayInfo = $holidayAPI->getHolidayInfo($event_date_start);
+            $holidayInfo[] = "Start date ({$event_date_start}): {$startDateHolidayInfo[0]['name']}";
+        }
+        if ($isEndDateHoliday) {
+            $endDateHolidayInfo = $holidayAPI->getHolidayInfo($event_date_end);
+            $holidayInfo[] = "End date ({$event_date_end}): {$endDateHolidayInfo[0]['name']}";
+        }
+        $holidayWarning = "Note: The following dates are holidays:\n" . implode("\n", $holidayInfo);
+    }
+
     $sql = "INSERT INTO bookingform1 (fullname, email, full_address, contact_number, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime)
             VALUES ('$fullname', '$email', '$full_address', '$contact_number', '$bookingpreference', '$reason', '$event_date_start', '$event_date_end', '$event_time_start', '$event_time_end', '$others', '$bookingtime')";
 
@@ -79,15 +99,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    Facility: $bookingpreference<br>
                    Date: $event_date_start to $event_date_end<br>
                    Time: $event_time_start to $event_time_end<br>
-                   Reason: $reason<br><br>
-                   You will receive a reminder email one day before your booking.<br><br>
+                   Reason: $reason<br><br>";
+        
+        if ($holidayWarning) {
+            $message .= "<strong>Important Notice:</strong><br>" . nl2br($holidayWarning) . "<br><br>";
+        }
+        
+        $message .= "You will receive a reminder email one day before your booking.<br><br>
                    Best regards,<br>
                    Municipality Resource Booking System";
         
         sendEmail($email, $subject, $message);
         
+        $alertMessage = 'Booking successful! A confirmation email has been sent to your email address.';
+        if ($holidayWarning) {
+            $alertMessage .= '\n\n' . $holidayWarning;
+        }
+        
         echo "<script>
-                alert('Booking successful! A confirmation email has been sent to your email address.');
+                alert('$alertMessage');
                 window.location.href='../Html_Codes/EndPage.html';
               </script>";
     } else {
