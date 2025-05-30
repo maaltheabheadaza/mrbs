@@ -142,9 +142,7 @@ $admin = $_SESSION['admin'];
                 <i class="fa-solid fa-chevron-left"></i>
                 User History
               </div>
-              <li class="item">
-                <a href="#">View Users</a>
-              </li>
+              
               <li class="item">
                   <a href="../Php_Codes/AdminPage_viewuser.php">User List</a>
               </li>
