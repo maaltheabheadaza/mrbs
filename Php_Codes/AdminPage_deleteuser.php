@@ -222,6 +222,137 @@ $admin = $_SESSION['admin'];
     <script src="../Javascript_Codes/AdminPage_searchuserscript.js"></script>
     <script src="../Javascript_Codes/AdminPage_deleteuserscript.js"></script>
     <script>
+        // Delete functionality
+        document.querySelectorAll('.delete-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this user?')) {
+                    const userId = this.getAttribute('data-id');
+                    const formData = new FormData();
+                    formData.append('id', userId);
+
+                    fetch('delete_user.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Clear existing table content except header
+                            const table = document.getElementById('userTable');
+                            while (table.rows.length > 1) {
+                                table.deleteRow(1);
+                            }
+                            
+                            // Rebuild table with updated data
+                            data.users.forEach(user => {
+                                const row = table.insertRow();
+                                row.id = 'row' + user.id;
+                                
+                                // Insert cells
+                                const cells = [
+                                    user.id,
+                                    user.fullname,
+                                    user.email,
+                                    user.contact_number,
+                                    user.full_address,
+                                    user.valid_password
+                                ];
+                                
+                                cells.forEach(cellData => {
+                                    const cell = row.insertCell();
+                                    cell.textContent = cellData;
+                                });
+                                
+                                // Add delete icon
+                                const actionCell = row.insertCell();
+                                actionCell.innerHTML = `<i class='uil uil-trash delete-icon' data-id='${user.id}'></i>`;
+                            });
+                            
+                            // Reattach event listeners to new delete icons
+                            attachDeleteListeners();
+                        } else {
+                            alert('Error deleting user: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting user. Please try again.');
+                    });
+                }
+            });
+        });
+
+        // Function to attach delete event listeners
+        function attachDeleteListeners() {
+            document.querySelectorAll('.delete-icon').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    // Remove existing click event listener
+                    icon.replaceWith(icon.cloneNode(true));
+                    // Add the event listener to the new element
+                    document.querySelector(`[data-id='${icon.getAttribute('data-id')}']`).addEventListener('click', function() {
+                        // Your existing click handler code here
+                        if (confirm('Are you sure you want to delete this user?')) {
+                            const userId = this.getAttribute('data-id');
+                            const formData = new FormData();
+                            formData.append('id', userId);
+
+                            fetch('delete_user.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Clear existing table content except header
+                                    const table = document.getElementById('userTable');
+                                    while (table.rows.length > 1) {
+                                        table.deleteRow(1);
+                                    }
+                                    
+                                    // Rebuild table with updated data
+                                    data.users.forEach(user => {
+                                        const row = table.insertRow();
+                                        row.id = 'row' + user.id;
+                                        
+                                        // Insert cells
+                                        const cells = [
+                                            user.id,
+                                            user.fullname,
+                                            user.email,
+                                            user.contact_number,
+                                            user.full_address,
+                                            user.valid_password
+                                        ];
+                                        
+                                        cells.forEach(cellData => {
+                                            const cell = row.insertCell();
+                                            cell.textContent = cellData;
+                                        });
+                                        
+                                        // Add delete icon
+                                        const actionCell = row.insertCell();
+                                        actionCell.innerHTML = `<i class='uil uil-trash delete-icon' data-id='${user.id}'></i>`;
+                                    });
+                                    
+                                    // Reattach event listeners to new delete icons
+                                    attachDeleteListeners();
+                                } else {
+                                    alert('Error deleting user: ' + (data.message || 'Unknown error'));
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Error deleting user. Please try again.');
+                            });
+                        }
+                    });
+                });
+            });
+        }
+
+        // Initial attachment of delete listeners
+        attachDeleteListeners();
+
         function showLogoutModal() {
             document.getElementById('logoutModal').classList.add('show');
             document.getElementById('logoutOverlay').classList.add('show');

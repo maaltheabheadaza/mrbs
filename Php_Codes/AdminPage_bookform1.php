@@ -217,11 +217,13 @@ $admin = $_SESSION['admin'];
       }
       #userTable4 th:nth-child(2), 
       #userTable4 td:nth-child(2) {
-        width: 140%;
+        width: 100%;
+        min-width: 300px;
       }
       #userTable4 th:nth-child(3), 
       #userTable4 td:nth-child(3) {
         width: 20%;
+        min-width: 100px;
       }
       #userTable4 td.editable span {
         width: 100%;
