@@ -171,7 +171,7 @@ $admin = $_SESSION['admin'];
       }
 
       .table-container1 {
-        width: 75%;
+        width: 95%;
         height: 60%;
         overflow: auto;
         border: none; 
@@ -201,7 +201,6 @@ $admin = $_SESSION['admin'];
         position: sticky; 
         padding: 10px;
         top: 0;
-        
         background-color: #fff; 
       }
       #userTable4 td.editable span {
@@ -209,6 +208,24 @@ $admin = $_SESSION['admin'];
         width: 150px;
         padding: 2px 4px;
         display: inline-block;
+      }
+
+      /* Add column width specifications */
+      #userTable4 th:nth-child(1), 
+      #userTable4 td:nth-child(1) {
+        width: 10%;
+      }
+      #userTable4 th:nth-child(2), 
+      #userTable4 td:nth-child(2) {
+        width: 140%;
+      }
+      #userTable4 th:nth-child(3), 
+      #userTable4 td:nth-child(3) {
+        width: 20%;
+      }
+      #userTable4 td.editable span {
+        width: 100%;
+        min-width: 300px;
       }
 
       .modal-overlay {
@@ -448,7 +465,6 @@ $admin = $_SESSION['admin'];
       </header>
       <form action="add_booking_preference1.php" method="POST">
         <input type="text" name="booking_preference" placeholder="Add Booking Preference" required><br><br>
-        <input type="text" name="per_hour" placeholder="Rate ( /per hour)" required>
         <input type="submit" id="button" value="Add Booking"></input>
       </form>
     </div>
@@ -458,7 +474,6 @@ $admin = $_SESSION['admin'];
   <tr>
     <th>ID</th>
     <th>Booking Preference</th>
-    <th>Rate (₱) /Per Hour</th>
     <th>Action</th>
   </tr>
 
@@ -467,7 +482,7 @@ $admin = $_SESSION['admin'];
   if ($conn->connect_error) {
       die("Connection Failed: " . $conn->connect_error);
   }
-  $sql = "SELECT id, preference, per_hour FROM booking_preferences1";
+  $sql = "SELECT id, preference FROM booking_preferences1";
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
@@ -475,7 +490,6 @@ $admin = $_SESSION['admin'];
           echo "<tr data-id='" . $row["id"] . "'>
                   <td>" . $row["id"] . "</td>
                   <td class='editable' data-field='preference'><span>" . $row["preference"] . "</span></td>
-                  <td class='editable' data-field='per_hour'><span>" . $row["per_hour"] . "</span></td>
                   <td>
                       <a href='#' class='save-btn' style='margin-right:15px;'><i class='fa-solid fa-floppy-disk'></i></a>
                       <a href='#' class='delete-row' data-id='" . $row["id"] . "'><i class='fas fa-trash-alt'></i></a>
@@ -483,7 +497,7 @@ $admin = $_SESSION['admin'];
                 </tr>";
       }
   } else {
-      echo "<tr><td colspan='4'>0 result</td></tr>";
+      echo "<tr><td colspan='3'>0 result</td></tr>";
   }
 
   $conn->close();
@@ -553,12 +567,11 @@ document.querySelectorAll('#userTable4 tr[data-id]').forEach(row => {
   row.querySelector('.save-btn').addEventListener('click', () => {
     const id = row.dataset.id;
     const preference = row.querySelectorAll('.editable')[0].innerText.trim();
-    const perHour = row.querySelectorAll('.editable')[1].innerText.trim();
 
     fetch('update_preference1.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, preference, per_hour: perHour })
+      body: JSON.stringify({ id, preference })
     })
     .then(res => res.text())
     .then(msg => {
