@@ -203,8 +203,8 @@
                 }
 
                 if (warningMessage) {
-                    const proceed = confirm(warningMessage + '\nDo you want to proceed with the booking?');
-                    return proceed;
+                    showHolidayModal(warningMessage + '\nDo you want to proceed with the booking?');
+                    return false;
                 }
             }
             return true;

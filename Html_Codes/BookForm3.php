@@ -217,8 +217,8 @@
                     holidays.forEach(holiday => {
                         warningMessage += `${holiday.date}: ${holiday.name} (${holiday.type})\n`;
                     });
-                    const proceed = confirm(warningMessage + '\nDo you want to proceed with the booking?');
-                    return proceed;
+                    showHolidayModal(warningMessage + '\nDo you want to proceed with the booking?');
+                    return false;
                 }
             }
             return true;
