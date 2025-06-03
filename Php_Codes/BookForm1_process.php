@@ -111,15 +111,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         sendEmail($email, $subject, $message);
         
-        $alertMessage = 'Booking successful! A confirmation email has been sent to your email address.';
-        if ($holidayWarning) {
-            $alertMessage .= '\n\n' . $holidayWarning;
-        }
-        
-        echo "<script>
-                alert('$alertMessage');
-                window.location.href='../Html_Codes/EndPage.html';
-              </script>";
+        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>\n";
+        echo "<script>\nSwal.fire({\n  icon: 'success',\n  title: 'Booking Successful!',\n  html: `<div style='text-align:left;font-size:1.1em;'>\n    <b>Thank you for your booking!</b><br><br>\n    <b>Facility:</b> $bookingpreference<br>\n    <b>Date:</b> $event_date_start to $event_date_end<br>\n    <b>Time:</b> $event_time_start to $event_time_end<br>\n    <b>Reason:</b> $reason<br>\n    <b>Email:</b> $email<br>\n    <b>Name:</b> $fullname<br>\n    <b>Address:</b> $full_address<br>\n    <b>Contact:</b> $contact_number<br>\n    <b>Others:</b> $others<br>\n    <br><span style='color:#009688;font-weight:bold;'>A confirmation email has been sent to your email address.</span>\n  </div>`,\n  confirmButtonText: 'OK',\n  confirmButtonColor: '#009688'\n}).then(() => {\n  window.location.href='../Html_Codes/EndPage.html';\n});\n<\/script>";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }

@@ -25,8 +25,12 @@ const container = document.querySelector(".container"),
     })
 
     signUp.addEventListener("click", ( )=>{
+        container.classList.remove("login-active");
+        container.classList.add("signup-active");
         container.classList.add("active");
     });
     login.addEventListener("click", ( )=>{
+        container.classList.remove("signup-active");
+        container.classList.add("login-active");
         container.classList.remove("active");
     });

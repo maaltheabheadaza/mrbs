@@ -31,11 +31,16 @@ body{
 .container .forms{
     display: flex;
     align-items: center;
-    height: 700px;
     width: 200%;
     transition: height 0.2s ease;
 }
 
+.container.login-active .forms {
+    height: 500px;
+}
+.container.signup-active .forms {
+    height: 700px;
+}
 
 .container .form{
     width: 50%;
@@ -87,7 +92,8 @@ body{
     position: relative;
     height: 50px;
     width: 100%;
-    margin-top: 9px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .input-field input{
@@ -220,4 +226,11 @@ body{
 }
 #back:hover{
     border: none;
+}
+
+.form .input-field.recaptcha-field {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
 }
