@@ -230,3 +230,23 @@ body{
     display: flex;
     justify-content: center;
 }
+
+/* Add specific styling for profile upload field */
+.input-field.profile-upload {
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.input-field.profile-upload input[type="file"] {
+    padding: 10px 35px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.input-field.profile-upload i.icon {
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
