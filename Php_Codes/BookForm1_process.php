@@ -86,25 +86,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Execute the statement
     if ($stmt->execute()) {
-        // Send confirmation email
-        $subject = "Booking Confirmation - Community Hall";
-        $message = "Dear {$_POST['fullname']},<br><br>
-                   Thank you for your booking! Here are your booking details:<br><br>
-                   Facility: {$_POST['bookingpreference']}<br>
-                   Date: {$_POST['event_date_start']} to {$_POST['event_date_end']}<br>
-                   Time: {$_POST['event_time_start']} to {$_POST['event_time_end']}<br>
-                   Reason: {$_POST['reason']}<br><br>";
-        
-        if (isset($holidayWarning) && $holidayWarning) {
-            $message .= "<strong>Important Notice:</strong><br>" . nl2br($holidayWarning) . "<br><br>";
-        }
-        
-        $message .= "You will receive a reminder email one day before your booking.<br><br>
-                   Best regards,<br>
-                   Municipality Resource Booking System";
-        
-        sendEmail($_POST['email'], $subject, $message);
-        
         // Redirect to EndPage.html after successful booking
         header('Location: ../Html_Codes/EndPage.html');
         exit();

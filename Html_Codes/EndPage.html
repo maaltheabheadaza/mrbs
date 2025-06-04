@@ -38,15 +38,13 @@
 	</footer>
 
 	<script>
-	window.onload = function() {
-	  Swal.fire({
+	Swal.fire({
 		icon: 'success',
-		title: 'Booking Successful!',
-		html: 'Your booking has been saved.<br>A confirmation receipt has been sent to your email.',
-		confirmButtonColor: '#009688',
-		confirmButtonText: 'OK'
-	  });
-	}
+		title: 'Booking Submitted!',
+		html: 'Thank you for your booking request.<br>Your request has been received and is pending review by our team.<br><br>You will receive an email notification once your booking is <b>approved</b> or <b>declined</b>.',
+		confirmButtonText: 'OK',
+		confirmButtonColor: '#009688'
+	});
 	</script>
 </body>
 </html>

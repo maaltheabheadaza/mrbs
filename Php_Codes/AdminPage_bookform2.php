@@ -577,7 +577,7 @@ $admin = $_SESSION['admin'];
             statusCell.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
             statusCell.className = 'status-badge status-' + newStatus;
             btn.parentElement.querySelectorAll('.approve-booking, .decline-booking').forEach(el => el.remove());
-            Swal.fire({icon:'success',title:'Status updated!',timer:1200,showConfirmButton:false});
+            Swal.fire({icon:'success',title: (newStatus==='approved'?'Booking approved and email notification sent to the user.':'Booking declined and email notification sent to the user.'),timer:1800,showConfirmButton:false});
           } else {
             Swal.fire({icon:'error',title:'Error',text:data.message||'Failed to update status'});
           }

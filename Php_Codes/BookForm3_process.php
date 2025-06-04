@@ -76,22 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if ($stmt->execute()) {
-        // Send confirmation email
-        $subject = "Booking Confirmation - Transportation";
-        $message = "Dear {$_POST['fullname']},<br><br>
-                   Thank you for your booking! Here are your booking details:<br><br>
-                   Vehicle Type: {$_POST['vehicle_type']}<br>
-                   Pick-up Date: {$_POST['pick_up_date']}<br>
-                   Pick-up Time: {$_POST['pick_up_time']}<br>
-                   Destination: {$_POST['destination']}<br>
-                   Duration: {$_POST['days_use']} days<br>
-                   Reason: {$_POST['reason']}<br><br>
-                   You will receive a reminder email one day before your pick-up date.<br><br>
-                   Best regards,<br>
-                   Municipality Resource Booking System";
-        
-        sendEmail($_POST['email'], $subject, $message);
-        
         // Redirect to EndPage.html after successful booking
         header('Location: ../Html_Codes/EndPage.html');
         exit();

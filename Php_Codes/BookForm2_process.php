@@ -73,19 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$fullname', '$email', '$full_address', '$contact_number', '$bookingpreference', '$reason', '$book_date_start', '$book_date_end', '$book_time_start', '$book_time_end', '$sport_equipment', '$others', '$bookingtime')";
 
     if ($conn->query($sql) === TRUE) {
-        // Send confirmation email
-        $subject = "Booking Confirmation - Sports Facility";
-        $message = "Dear $fullname,<br><br>
-                   Thank you for your booking! Here are your booking details:<br><br>
-                   Facility: $bookingpreference<br>
-                   Date: $book_date_start to $book_date_end<br>
-                   Time: $book_time_start to $book_time_end<br>
-                   Reason: $reason<br>
-                   Equipment: $sport_equipment<br><br>
-                   You will receive a reminder email one day before your booking.<br><br>
-                   Best regards,<br>
-                   Municipality Resource Booking System";
-        sendEmail($email, $subject, $message);
+        // Redirect to EndPage.html after successful booking
         header('Location: ../Html_Codes/EndPage.html');
         exit();
     } else {
