@@ -571,18 +571,21 @@ $admin = $_SESSION['admin'];
                   fetch('../Php_Codes/delete_preference1.php?id=' + id, { method: 'DELETE' })
                       .then(response => {
                           if (response.ok) {
-                              row.remove();
-                              const rows = document.querySelectorAll('#userTable4 tr');
-                              rows.forEach((row, index) => {
-                                  if (index > 0) {
-                                      row.cells[0].textContent = index;
-                                  }
+                              return response.text().then(text => {
+                                  row.remove();
+                                  const rows = document.querySelectorAll('#userTable4 tr');
+                                  rows.forEach((row, index) => {
+                                      if (index > 0) {
+                                          row.cells[0].textContent = index;
+                                      }
+                                  });
+                                  alert(text);
                               });
                           } else {
-                              alert('Failed to delete booking.');
+                              throw new Error('Failed to delete booking.');
                           }
                       })
-                      .catch(error => alert('Failed to delete booking.'));
+                      .catch(error => alert(error.message));
               }
               return false;
           };
