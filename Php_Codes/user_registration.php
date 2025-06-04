@@ -105,8 +105,17 @@
             error_log('Gmail API Error: ' . $e->getMessage());
         }
 
-        echo '<script>alert("Register Successfully!");</script>';
-        echo '<script>window.location.href = "../Html_Codes/Userlogin.html";</script>';
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>
+Swal.fire({
+  icon: "success",
+  title: "Registered Successfully!",
+  text: "You can now log in to your account.",
+  confirmButtonColor: "#009688"
+}).then(() => {
+  window.location.href = "../Html_Codes/Userlogin.html";
+});
+</script>';
 
         $stmt->close();
         $conn->close();

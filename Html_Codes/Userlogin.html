@@ -14,7 +14,7 @@
     <div>
         <button type="button" id="back"><span id="spanBtn"></span><a href="../Html_Codes/Homepage.html"><i class="fas fa-arrow-left"></i></a></button>
       </div>
-    <div class="container">
+    <div class="container login-active">
         <div class="forms">
             <div class="form login">
                 <span class="title">SIGN IN</span>
@@ -29,17 +29,17 @@
                         <i class="uil uil-eye-slash showHidePw"></i>
                     </div>
                     <!-- Add reCAPTCHA -->
-                    <div class="g-recaptcha" data-sitekey="6LdV3zsrAAAAAMfu2sBWatVem7gg1F5xNJab5vSc"></div>
+                    <div class="g-recaptcha recaptcha-field" data-sitekey="6LdV3zsrAAAAAMfu2sBWatVem7gg1F5xNJab5vSc"></div>
                     <div class="input-field button">
                         <input type="submit" value="Login"> 
                     </div>
+                    <div class="login-signup">
+                        <span class="text">Not a member?
+                            <a href="#" class="text signup-link">Signup Now</a>
+                        </span>
+                    </div>
                 </form>
-                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                <div class="login-signup">
-                    <span class="text">Not a member?
-                        <a href="#" class="text signup-link">Signup Now</a>
-                    </span>
-                </div>
+
             </div>
 
             <!-- AMAZING PART -->
@@ -98,5 +98,6 @@
         </div>
     </div>
      <script src="../Javascript_Codes/Userloginscript.js"></script> 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>

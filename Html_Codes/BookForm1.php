@@ -102,10 +102,10 @@
                         </div> 
                         <div class="input-field">
                             <label>If Others  <p>*State Another Reasons | Type N/A if none</p></label>
-                            <textarea name="others" id="othertext" required></textarea>
+                            <textarea name="others" id="othertext"></textarea>
                         </div> 
                         <div class="input-field terms">
-                            <input type="checkbox" id="terms" required>
+                            <input type="checkbox" id="terms">
                             <label id="labelterms" for="terms">I agree to the terms and conditions</label>
                         </div>
                     </div>
@@ -127,6 +127,9 @@
             <button onclick="closeHolidayModal()" style="background-color: #009688; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Choose Another Date</button>
         </div>
     </div>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         const form = document.querySelector("form");
@@ -213,28 +216,50 @@
         form.addEventListener("submit", async function(e) {
             e.preventDefault();
             let isValid = true;
-            
-            // Check if all required fields are filled
             allInput.forEach(input => {
                 if(input.hasAttribute('required') && !input.value) {
                     isValid = false;
                 }
             });
-
+            const termsChecked = document.getElementById('terms').checked;
+            if (!termsChecked) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Terms Required',
+                    text: 'You must agree to the terms and conditions before submitting.'
+                });
+                return;
+            }
             if(isValid) {
                 try {
                     const holidayCheck = await validateDates();
                     if (holidayCheck) {
-                        form.classList.add('secActive');
-                        form.submit();
+                        // Gather booking details
+                        const formData = new FormData(form);
+                        let detailsHtml = `<ul style='text-align:left;'>`;
+                        formData.forEach((value, key) => {
+                            if(key !== 'terms') detailsHtml += `<li><b>${key.replace(/_/g, ' ')}:</b> ${value}</li>`;
+                        });
+                        detailsHtml += `</ul>`;
+                        Swal.fire({
+                            title: 'Confirm Your Booking',
+                            html: detailsHtml,
+                            showCancelButton: true,
+                            confirmButtonText: 'Confirm',
+                            cancelButtonText: 'Back',
+                            preConfirm: () => {
+                                form.classList.add('secActive');
+                                form.submit();
+                            }
+                        });
                     }
                 } catch (error) {
                     console.error('Error during form submission:', error);
-                    alert('There was an error checking holiday dates. Please try again.');
+                    Swal.fire('Error', 'There was an error checking holiday dates. Please try again.', 'error');
                 }
             } else {
                 form.classList.remove('secActive');
-                alert("Please fill in all required fields.");
+                Swal.fire('Missing Fields', 'Please fill in all required fields.', 'warning');
             }
         });
 

@@ -85,13 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    You will receive a reminder email one day before your booking.<br><br>
                    Best regards,<br>
                    Municipality Resource Booking System";
-        
         sendEmail($email, $subject, $message);
-        
-        echo "<script>
-                alert('Booking successful! A confirmation email has been sent to your email address.');
-                window.location.href='../Html_Codes/EndPage.html';
-              </script>";
+        header('Location: ../Html_Codes/EndPage.html');
+        exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
