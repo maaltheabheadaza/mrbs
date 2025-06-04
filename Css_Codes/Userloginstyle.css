@@ -26,49 +26,45 @@ body{
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.8);
     overflow: hidden;
     margin: 0 20px;
+    transition: height 0.3s;
 }
 
-.container .forms{
-    display: flex;
-    align-items: center;
-    width: 200%;
-    transition: height 0.2s ease;
+.container .forms {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 500px;
 }
 
-.container.login-active .forms {
-    height: 500px;
-}
-.container.signup-active .forms {
-    height: 700px;
-}
-
-.container .form{
-    width: 50%;
+.container .form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s;
     padding: 40px;
     background-color: #fff;
-    transition: margin-left 0.18s ease;
     overflow-y: auto;
     max-height: 700px;
+    box-sizing: border-box;
 }
 
-.container.active .login{
-    margin-left: -50%;
-    opacity: 0;
-    transition: margin-left 0.18s ease, opacity 0.15s ease;
-}
-
-.container .signup{
-    opacity: 0;
-    transition: opacity 0.09s ease;
-}
-.container.active .signup{
+.container.login-active .form.login,
+.container.signup-active .form.signup,
+.container.forgot-active .form.forgot {
     opacity: 1;
-    transition: opacity 0.2s ease;
+    pointer-events: auto;
+    z-index: 2;
+    position: relative;
 }
 
-.container.active .forms{
-    height: 700px;
+.container.signup-active .forms {
+    min-height: 700px;
 }
+
 .container .form .title{
     position: relative;
     font-size: 35px;
