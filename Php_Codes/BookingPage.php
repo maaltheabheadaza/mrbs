@@ -143,9 +143,6 @@
     </style>
 </head>
 <body>
-    <div>
-        <button type="button" id="back"><span id="backspan"></span><a href="#" onclick="handleLogout(event)"><i class="fas fa-arrow-left"></i></a></button>
-    </div>
     <div class="card-list">
         <a href="../Html_Codes/BookForm1.php" class="card-item">
             <img alt="Card Image" src="../Images/communityhalls.jpg">
@@ -173,8 +170,25 @@
         </a>
     </div>
 
-    <div>
-      <button type="button" id="viewBook"><span id="viewspan"></span><a href="../Php_Codes/checkAvailability.php" style="text-decoration: none; color:white">View Booking Details</a></button>
+    <div style="position: absolute; top: 30px; right: 40px; display: flex; align-items: center; gap: 18px; z-index: 100;">
+      <button type="button" id="viewBook" style="position: static; margin: 0;"><span id="viewspan"></span><a href="../Php_Codes/checkAvailability.php" style="text-decoration: none; color:white">View Booking Details</a></button>
+      <div id="userProfileContainer" style="position: relative;">
+        <div id="userIcon" style="cursor: pointer; width: 48px; height: 48px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.12); transition: box-shadow 0.2s;">
+          <i class="fas fa-user" style="font-size: 28px; color: #009688;"></i>
+        </div>
+        <div id="userProfilePopup" style="display: none; position: absolute; top: 60px; right: 0; min-width: 320px; background: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 28px 24px 16px 24px; z-index: 2000; transition: opacity 0.2s;">
+          <div style="position: absolute; top: 16px; right: 16px; cursor: pointer;" id="logoutIcon" title="Logout">
+            <i class="fas fa-sign-out-alt" style="font-size: 22px; color: #e74c3c;"></i>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
+            <img id="profileImage" src="../Images/default-user.png" alt="Profile Image" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.10); margin-bottom: 12px; border: 3px solid #009688;">
+            <div style="font-size: 1.2em; font-weight: bold; color: #222; margin-bottom: 4px;" id="profileName">Loading...</div>
+            <div style="font-size: 1em; color: #555; margin-bottom: 4px;" id="profileEmail">Loading...</div>
+            <div style="font-size: 0.95em; color: #888; margin-bottom: 18px; text-align: center;" id="profileAddress">Loading...</div>
+            <button id="viewHistoryBtn" style="background: linear-gradient(90deg, #009688 60%, #26a69a 100%); color: #fff; border: none; border-radius: 22px; padding: 10px 32px; font-size: 1em; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.10); cursor: pointer; margin-top: 8px; transition: background 0.2s;">View your book history</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <section class="footer">
@@ -204,6 +218,7 @@
         <p class="copyright">&copy;AAJBangalao@BSIT-2B</p>
       </section>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Prevent back button after logout
         window.addEventListener('load', function() {
@@ -276,6 +291,82 @@
                     button.style.pointerEvents = 'auto';
                 });
         }
+
+        // User Profile Popup Logic
+        const userIcon = document.getElementById('userIcon');
+        const userProfilePopup = document.getElementById('userProfilePopup');
+        let profileLocked = false;
+
+        userIcon.addEventListener('mouseenter', () => {
+          if (!profileLocked) userProfilePopup.style.display = 'block';
+        });
+        userIcon.addEventListener('mouseleave', () => {
+          if (!profileLocked) userProfilePopup.style.display = 'none';
+        });
+        userIcon.addEventListener('click', () => {
+          profileLocked = !profileLocked;
+          userProfilePopup.style.display = profileLocked ? 'block' : 'none';
+        });
+        document.addEventListener('click', (e) => {
+          if (!userProfilePopup.contains(e.target) && !userIcon.contains(e.target)) {
+            profileLocked = false;
+            userProfilePopup.style.display = 'none';
+          }
+        });
+
+        // Fetch user info via AJAX
+        fetch('../Php_Codes/getUserProfile.php')
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('profileName').textContent = data.fullname;
+              document.getElementById('profileEmail').textContent = data.email;
+              document.getElementById('profileAddress').textContent = data.full_address;
+              document.getElementById('profileImage').src = data.profile_image || '../Images/default-user.png';
+            } else {
+              document.getElementById('profileName').textContent = 'Unknown User';
+              document.getElementById('profileEmail').textContent = '';
+              document.getElementById('profileAddress').textContent = '';
+            }
+          });
+
+        // View history button
+        document.getElementById('viewHistoryBtn').onclick = function() {
+          window.location.href = '../Php_Codes/viewBookingHistory.php';
+        };
+
+        // Logout icon logic
+        document.getElementById('logoutIcon').onclick = function(e) {
+          e.stopPropagation();
+          Swal.fire({
+            title: 'Are you sure you want to logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#009688',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, logout',
+            background: '#fff',
+            color: '#222',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch('../Php_Codes/logout.php')
+                .then(response => response.json())
+                .then(data => {
+                  Swal.fire({
+                    title: 'Logged out!',
+                    text: data.message || 'You have been logged out.',
+                    icon: 'success',
+                    confirmButtonColor: '#009688',
+                    timer: 1500,
+                    showConfirmButton: false
+                  });
+                  setTimeout(() => {
+                    window.location.href = '../Html_Codes/Homepage.html';
+                  }, 1500);
+                });
+            }
+          });
+        };
     </script>
 </body>
 </html>
