@@ -553,61 +553,72 @@ $admin = $_SESSION['admin'];
         });
       });
 
+      // Remove all existing delete event listeners first
       document.querySelectorAll('.delete-row').forEach(item => {
-    item.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (confirm('Are you sure you want to delete this booking?')) {
-            const row = this.closest('tr');
-            const id = this.dataset.id;
-            fetch('../Php_Codes/delete_preference1.php?id=' + id, { method: 'DELETE' })
-                .then(response => {
-                    if (response.ok) {
-                        row.remove();
-                        alert('Booking deleted successfully!');
-                        
-                        const rows = document.querySelectorAll('#userTable4 tr');
-                        rows.forEach((row, index) => {
-                            if (index > 0) {
-                                row.cells[0].textContent = index;
-                            }
-                        });
-                    } else {
-                        throw new Error('Failed to delete booking.');
-                    }
-                })
-                .catch(error => alert(error.message));
-        }
-    });
-});
+          const newItem = item.cloneNode(true);
+          item.parentNode.replaceChild(newItem, item);
+      });
 
-document.querySelectorAll('#userTable4 tr[data-id]').forEach(row => {
-  row.querySelectorAll('.editable').forEach(cell => {
-    cell.addEventListener('click', () => {
-      if (!cell.hasAttribute('contenteditable')) {
-        cell.setAttribute('contenteditable', 'true');
-        cell.focus();
-        row.querySelector('.save-btn').style.display = 'inline-block';
-      }
-    });
-  });
+      // Add new event listeners
+      document.querySelectorAll('.delete-row').forEach(item => {
+          item.onclick = function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              const row = this.closest('tr');
+              const id = this.dataset.id;
+              
+              if (confirm('Are you sure you want to delete this booking?')) {
+                  fetch('../Php_Codes/delete_preference1.php?id=' + id, { method: 'DELETE' })
+                      .then(response => {
+                          if (response.ok) {
+                              return response.text().then(text => {
+                                  row.remove();
+                                  const rows = document.querySelectorAll('#userTable4 tr');
+                                  rows.forEach((row, index) => {
+                                      if (index > 0) {
+                                          row.cells[0].textContent = index;
+                                      }
+                                  });
+                                  alert(text);
+                              });
+                          } else {
+                              throw new Error('Failed to delete booking.');
+                          }
+                      })
+                      .catch(error => alert(error.message));
+              }
+              return false;
+          };
+      });
 
-  row.querySelector('.save-btn').addEventListener('click', () => {
-    const id = row.dataset.id;
-    const preference = row.querySelectorAll('.editable')[0].innerText.trim();
+      document.querySelectorAll('#userTable4 tr[data-id]').forEach(row => {
+        row.querySelectorAll('.editable').forEach(cell => {
+          cell.addEventListener('click', () => {
+            if (!cell.hasAttribute('contenteditable')) {
+              cell.setAttribute('contenteditable', 'true');
+              cell.focus();
+              row.querySelector('.save-btn').style.display = 'inline-block';
+            }
+          });
+        });
 
-    fetch('update_preference1.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, preference })
-    })
-    .then(res => res.text())
-    .then(msg => {
-    
-      row.querySelectorAll('.editable').forEach(cell => cell.removeAttribute('contenteditable'));
-      row.querySelector('.save-btn').style.display = 'none';
-    });
-  });
-});
+        row.querySelector('.save-btn').addEventListener('click', () => {
+          const id = row.dataset.id;
+          const preference = row.querySelectorAll('.editable')[0].innerText.trim();
+
+          fetch('update_preference1.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, preference })
+          })
+          .then(res => res.text())
+          .then(msg => {
+          
+            row.querySelectorAll('.editable').forEach(cell => cell.removeAttribute('contenteditable'));
+            row.querySelector('.save-btn').style.display = 'none';
+          });
+        });
+      });
 
         function showLogoutModal() {
             document.getElementById('logoutModal').classList.add('show');
