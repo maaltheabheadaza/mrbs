@@ -24,24 +24,61 @@
     $contactNumber = $_POST['contact_number'];
     $address = $_POST['full_address'];
     $password = $_POST['valid_password'];
+    $confirmPassword = $_POST['confirm_password'];
 
-    // Handle image upload
-    $imageUrl = null;
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
-            'folder' => 'user_profiles'
+    // Check if passwords match
+    if ($password !== $confirmPassword) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Passwords do not match!',
+            'error' => 'password_mismatch'
         ]);
-        $imageUrl = $uploadResult['secure_url'];
+        exit;
     }
+
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     $conn = new mysqli('localhost', 'root', '', 'user_info');
     if($conn->connect_error) {
         die("Connection Failed: " .$conn->connect_error);
     } else {
+        // Check if email already exists
+        $checkEmail = $conn->prepare("SELECT email FROM users WHERE email = ?");
+        $checkEmail->bind_param("s", $email);
+        $checkEmail->execute();
+        $result = $checkEmail->get_result();
+        
+        if($result->num_rows > 0) {
+            // Email already exists
+            error_log("Email exists check: Email " . $email . " already exists in database");
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => 'Email already exists!',
+                'error' => 'email_exists'
+            ]);
+            $checkEmail->close();
+            $conn->close();
+            exit;
+        }
+        error_log("Email exists check: Email " . $email . " is available");
+        $checkEmail->close();
+
+        // Handle image upload
+        $imageUrl = null;
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+            $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
+                'folder' => 'user_profiles'
+            ]);
+            $imageUrl = $uploadResult['secure_url'];
+        }
+
         $stmt = $conn->prepare("INSERT into users (fullname, email, contact_number, full_address, valid_password, profile_image)
          VALUES (?, ?, ?, ?, ?, ?)");
 
-        $stmt->bind_param("ssisss", $fullname, $email, $contactNumber, $address, $password, $imageUrl);
+        $stmt->bind_param("ssisss", $fullname, $email, $contactNumber, $address, $hashedPassword, $imageUrl);
 
         $stmt->execute();
 
@@ -105,19 +142,23 @@
             error_log('Gmail API Error: ' . $e->getMessage());
         }
 
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>
-Swal.fire({
-  icon: "success",
-  title: "Registered Successfully!",
-  text: "You can now log in to your account.",
-  confirmButtonColor: "#009688"
-}).then(() => {
-  window.location.href = "../Html_Codes/Userlogin.html";
-});
-</script>';
-
         $stmt->close();
         $conn->close();
+
+        // Check if the request is AJAX
+        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            // Set JSON content type header
+            header('Content-Type: application/json');
+            // Return JSON response for AJAX request
+            echo json_encode([
+                'success' => true,
+                'message' => 'Registration successful!',
+                'redirect' => '../Html_Codes/Userlogin.html'
+            ]);
+        } else {
+            // For non-AJAX requests, redirect directly
+            header('Location: ../Html_Codes/Userlogin.html');
+            exit;
+        }
     }   
 ?>

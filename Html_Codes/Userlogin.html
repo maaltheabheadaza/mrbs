@@ -47,7 +47,7 @@
             <!-- Registration Form -->
             <div class="form signup">
                 <span class="title">Registration</span>
-                <form action="../Php_Codes/user_registration.php" method="POST" enctype="multipart/form-data">
+                <form id="registrationForm" action="../Php_Codes/user_registration.php" method="POST" enctype="multipart/form-data">
 
                     <div class="input-field">
                         <input type="text" name="fullname" placeholder="Enter your Name" required>
@@ -99,5 +99,80 @@
     </div>
      <script src="../Javascript_Codes/Userloginscript.js"></script> 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if passwords match
+            const password = document.querySelector('input[name="valid_password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+            
+            console.log('Password:', password);
+            console.log('Confirm Password:', confirmPassword);
+            
+            if (password !== confirmPassword) {
+                console.log('Passwords do not match');
+                Swal.fire({
+                    icon: "error",
+                    title: "Password Mismatch",
+                    text: "The passwords do not match. Please try again.",
+                    confirmButtonColor: "#009688"
+                });
+                return false;
+            }
+            
+            const formData = new FormData(this);
+            
+            fetch('../Php_Codes/user_registration.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Registered Successfully!",
+                        text: "You can now log in to your account.",
+                        confirmButtonColor: "#009688"
+                    }).then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else if (data.error === 'email_exists') {
+                    console.log('Email exists error detected');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Registration Failed",
+                        text: data.message,
+                        confirmButtonColor: "#009688"
+                    });
+                } else if (data.error === 'password_mismatch') {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Registration Failed",
+                        text: data.message,
+                        confirmButtonColor: "#009688"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Registration Failed",
+                    text: "An error occurred during registration. Please try again.",
+                    confirmButtonColor: "#009688"
+                });
+            });
+        });
+    </script>
 </body>
 </html>
