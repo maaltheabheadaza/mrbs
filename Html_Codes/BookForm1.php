@@ -9,6 +9,42 @@
     <link rel="stylesheet" href="../Css_Codes/BookForm1style.css">
     <link rel="icon" href="../Images/icon.png" type="image/png">
     <title>Community Halls | Centers Booking Form</title>
+    <style>
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #009688;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div>
@@ -17,7 +53,13 @@
     <div class="container">
         <header>Community Halls | Centers Booking Form</header>
 
-        <form action="../Php_Codes/BookForm1_process.php" method="post">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Processing your booking...</div>
+        </div>
+
+        <form action="../Php_Codes/BookForm1_process.php" method="post" onsubmit="showLoading()">
             <div class="form first">
                 <div class="details personal">
                     <span class="title">Personal Details</span>
@@ -138,6 +180,7 @@
         const endDateInput = document.querySelector('input[name="event_date_end"]');
         const modal = document.getElementById("holidayModal");
         const closeBtn = document.getElementsByClassName("close")[0];
+        const loadingOverlay = document.querySelector('.loading-overlay');
 
         function showHolidayModal(message) {
             document.getElementById("holidayMessage").innerHTML = message;
@@ -213,6 +256,14 @@
             return true;
         }
 
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
         form.addEventListener("submit", async function(e) {
             e.preventDefault();
             let isValid = true;
@@ -232,7 +283,9 @@
             }
             if(isValid) {
                 try {
+                    showLoading();
                     const holidayCheck = await validateDates();
+                    hideLoading();
                     if (holidayCheck) {
                         // Gather booking details
                         const formData = new FormData(form);
@@ -241,19 +294,23 @@
                             if(key !== 'terms') detailsHtml += `<li><b>${key.replace(/_/g, ' ')}:</b> ${value}</li>`;
                         });
                         detailsHtml += `</ul>`;
-                        Swal.fire({
+                        
+                        const result = await Swal.fire({
                             title: 'Confirm Your Booking',
                             html: detailsHtml,
                             showCancelButton: true,
                             confirmButtonText: 'Confirm',
                             cancelButtonText: 'Back',
-                            preConfirm: () => {
-                                form.classList.add('secActive');
-                                form.submit();
-                            }
+                            confirmButtonColor: '#009688'
                         });
+
+                        if (result.isConfirmed) {
+                            showLoading();
+                            form.submit();
+                        }
                     }
                 } catch (error) {
+                    hideLoading();
                     console.error('Error during form submission:', error);
                     Swal.fire('Error', 'There was an error checking holiday dates. Please try again.', 'error');
                 }

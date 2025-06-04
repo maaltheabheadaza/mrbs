@@ -56,52 +56,46 @@ function sendEmail($to, $subject, $message) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $full_address = $_POST['full_address'];
-    $contact_number = $_POST['contact_number'];
-    $bookingpreference = $_POST['bookingpreference'];
-    $reason = $_POST['reason'];
-    $event_date_start = $_POST['event_date_start'];
-    $event_date_end = $_POST['event_date_end'];
-    $event_time_start = $_POST['event_time_start'];
-    $event_time_end = $_POST['event_time_end'];
-    $others = $_POST['others'];
-    $bookingtime = date("Y-m-d H:i:s");
-
-    // Check for holidays
-    $holidayAPI = new HolidayAPI();
-    $isStartDateHoliday = $holidayAPI->isHoliday($event_date_start);
-    $isEndDateHoliday = $holidayAPI->isHoliday($event_date_end);
+    // Prepare the SQL statement
+    $sql = "INSERT INTO bookingform1 (fullname, email, full_address, contact_number, bookingpreference, reason, 
+            event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
-    $holidayWarning = "";
-    if ($isStartDateHoliday || $isEndDateHoliday) {
-        $holidayInfo = [];
-        if ($isStartDateHoliday) {
-            $startDateHolidayInfo = $holidayAPI->getHolidayInfo($event_date_start);
-            $holidayInfo[] = "Start date ({$event_date_start}): {$startDateHolidayInfo[0]['name']}";
-        }
-        if ($isEndDateHoliday) {
-            $endDateHolidayInfo = $holidayAPI->getHolidayInfo($event_date_end);
-            $holidayInfo[] = "End date ({$event_date_end}): {$endDateHolidayInfo[0]['name']}";
-        }
-        $holidayWarning = "Note: The following dates are holidays:\n" . implode("\n", $holidayInfo);
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        die("Error preparing statement: " . $conn->error);
     }
-
-    $sql = "INSERT INTO bookingform1 (fullname, email, full_address, contact_number, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime)
-            VALUES ('$fullname', '$email', '$full_address', '$contact_number', '$bookingpreference', '$reason', '$event_date_start', '$event_date_end', '$event_time_start', '$event_time_end', '$others', '$bookingtime')";
-
-    if ($conn->query($sql) === TRUE) {
+    
+    $bookingtime = date("Y-m-d H:i:s");
+    
+    // Bind parameters
+    $stmt->bind_param("ssssssssssss", 
+        $_POST['fullname'],
+        $_POST['email'],
+        $_POST['full_address'],
+        $_POST['contact_number'],
+        $_POST['bookingpreference'],
+        $_POST['reason'],
+        $_POST['event_date_start'],
+        $_POST['event_date_end'],
+        $_POST['event_time_start'],
+        $_POST['event_time_end'],
+        $_POST['others'],
+        $bookingtime
+    );
+    
+    // Execute the statement
+    if ($stmt->execute()) {
         // Send confirmation email
         $subject = "Booking Confirmation - Community Hall";
-        $message = "Dear $fullname,<br><br>
+        $message = "Dear {$_POST['fullname']},<br><br>
                    Thank you for your booking! Here are your booking details:<br><br>
-                   Facility: $bookingpreference<br>
-                   Date: $event_date_start to $event_date_end<br>
-                   Time: $event_time_start to $event_time_end<br>
-                   Reason: $reason<br><br>";
+                   Facility: {$_POST['bookingpreference']}<br>
+                   Date: {$_POST['event_date_start']} to {$_POST['event_date_end']}<br>
+                   Time: {$_POST['event_time_start']} to {$_POST['event_time_end']}<br>
+                   Reason: {$_POST['reason']}<br><br>";
         
-        if ($holidayWarning) {
+        if (isset($holidayWarning) && $holidayWarning) {
             $message .= "<strong>Important Notice:</strong><br>" . nl2br($holidayWarning) . "<br><br>";
         }
         
@@ -109,14 +103,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                    Best regards,<br>
                    Municipality Resource Booking System";
         
-        sendEmail($email, $subject, $message);
+        sendEmail($_POST['email'], $subject, $message);
         
-        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>\n";
-        echo "<script>\nSwal.fire({\n  icon: 'success',\n  title: 'Booking Successful!',\n  html: `<div style='text-align:left;font-size:1.1em;'>\n    <b>Thank you for your booking!</b><br><br>\n    <b>Facility:</b> $bookingpreference<br>\n    <b>Date:</b> $event_date_start to $event_date_end<br>\n    <b>Time:</b> $event_time_start to $event_time_end<br>\n    <b>Reason:</b> $reason<br>\n    <b>Email:</b> $email<br>\n    <b>Name:</b> $fullname<br>\n    <b>Address:</b> $full_address<br>\n    <b>Contact:</b> $contact_number<br>\n    <b>Others:</b> $others<br>\n    <br><span style='color:#009688;font-weight:bold;'>A confirmation email has been sent to your email address.</span>\n  </div>`,\n  confirmButtonText: 'OK',\n  confirmButtonColor: '#009688'\n}).then(() => {\n  window.location.href='../Html_Codes/EndPage.html';\n});\n<\/script>";
+        // Redirect to EndPage.html after successful booking
+        header('Location: ../Html_Codes/EndPage.html');
+        exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 
+    $stmt->close();
     $conn->close();
 }
 ?>

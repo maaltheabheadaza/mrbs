@@ -12,32 +12,25 @@ class HolidayAPI {
             'Content-Type: application/json'
         ]);
         
-        // Enable verbose debug output
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
-        $verbose = fopen('php://temp', 'w+');
-        curl_setopt($ch, CURLOPT_STDERR, $verbose);
+        // Set timeout to prevent hanging
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
         if (curl_errno($ch)) {
-            // Log the detailed error
-            rewind($verbose);
-            $verboseLog = stream_get_contents($verbose);
-            error_log("Curl verbose output:\n" . $verboseLog);
             error_log('Curl error: ' . curl_error($ch));
             curl_close($ch);
             return null;
         }
         
-        // Log the response for debugging
-        error_log("API Response (HTTP $httpCode): " . $response);
-        
         curl_close($ch);
-        fclose($verbose);
         
         if ($httpCode === 200) {
-            return json_decode($response, true);
+            $decoded = json_decode($response, true);
+            error_log("API Response: " . print_r($decoded, true));
+            return $decoded;
         }
         
         error_log("API request failed with status $httpCode: $response");
@@ -45,22 +38,50 @@ class HolidayAPI {
     }
 
     public function isHoliday($date) {
-        $dateObj = new DateTime($date);
-        $year = $dateObj->format('Y');
-        $month = $dateObj->format('m');
-        $day = $dateObj->format('d');
+        try {
+            $dateObj = new DateTime($date);
+            $year = $dateObj->format('Y');
+            $month = $dateObj->format('m');
+            $day = $dateObj->format('d');
 
-        $response = $this->makeRequest("/holidays/$year/$month/$day");
-        return !empty($response);
+            $response = $this->makeRequest("/holidays/$year/$month/$day");
+            
+            // Check if response is valid and contains holiday data
+            if (is_array($response) && !empty($response)) {
+                foreach ($response as $holiday) {
+                    if (isset($holiday['date']) && $holiday['date'] === $date) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (Exception $e) {
+            error_log("Error in isHoliday: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function getHolidayInfo($date) {
-        $dateObj = new DateTime($date);
-        $year = $dateObj->format('Y');
-        $month = $dateObj->format('m');
-        $day = $dateObj->format('d');
+        try {
+            $dateObj = new DateTime($date);
+            $year = $dateObj->format('Y');
+            $month = $dateObj->format('m');
+            $day = $dateObj->format('d');
 
-        return $this->makeRequest("/holidays/$year/$month/$day");
+            $response = $this->makeRequest("/holidays/$year/$month/$day");
+            
+            if (is_array($response) && !empty($response)) {
+                foreach ($response as $holiday) {
+                    if (isset($holiday['date']) && $holiday['date'] === $date) {
+                        return [$holiday];
+                    }
+                }
+            }
+            return null;
+        } catch (Exception $e) {
+            error_log("Error in getHolidayInfo: " . $e->getMessage());
+            return null;
+        }
     }
 
     public function getMonthHolidays($year, $month) {
