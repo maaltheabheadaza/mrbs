@@ -48,7 +48,7 @@
 </head>
 <body>
     <div>
-        <button type="button" id="back"><span id="spanBtn"></span><a href="../Html_Codes/BookingPage.html"><i class="fas fa-arrow-left"></i></a></button>
+        <button type="button" id="back"><span id="spanBtn"></span><a href="../Php_Codes/BookingPage.php"><i class="fas fa-arrow-left"></i></a></button>
     </div>
     <div class="container">
         <header>Community Halls | Centers Booking Form</header>

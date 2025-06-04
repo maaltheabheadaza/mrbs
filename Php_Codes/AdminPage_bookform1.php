@@ -67,6 +67,7 @@ $admin = $_SESSION['admin'];
         height: 60%;
         top: 70%;
         z-index: 0;
+        pointer-events: none;
       }
 
       .title2 {
@@ -426,6 +427,7 @@ $admin = $_SESSION['admin'];
             <th>Time End</th>
             <th>Others</th>
             <th>Booking Time</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
 
@@ -434,7 +436,7 @@ $admin = $_SESSION['admin'];
         if($conn->connect_error) {
             die("Connection Failed: ".$conn->connect_error);
         }
-        $sql = "SELECT id, fullname, email, full_address, contact_number, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime from bookingform1";
+        $sql = "SELECT id, fullname, email, full_address, contact_number, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime, status from bookingform1";
         $result = $conn->query($sql);
 
         if($result->num_rows>0) {
@@ -452,7 +454,14 @@ $admin = $_SESSION['admin'];
                 "</td><td>".$row["event_time_end"].
                 "</td><td>".$row["others"].
                 "</td><td>".$row["bookingtime"].
-                '<td><a href="#" class="delete-row" data-id="'.$row["id"].'"><i class="fas fa-trash-alt"></i></a></td>';
+                "</td><td><span class='status-badge status-".strtolower($row["status"] ?? 'pending')."'>".ucfirst($row["status"] ?? 'pending')."</span></td>".
+                '<td style="display:flex;gap:8px;justify-content:center;align-items:center;">';
+                if (($row["status"] ?? 'pending') === 'pending') {
+                    echo '<a href="#" class="approve-booking" data-id="'.$row["id"].'" data-type="hall" title="Approve"><i class="fas fa-check-circle" style="color:green;font-size:20px;"></i></a>';
+                    echo '<a href="#" class="decline-booking" data-id="'.$row["id"].'" data-type="hall" title="Decline"><i class="fas fa-times-circle" style="color:red;font-size:20px;"></i></a>';
+                }
+                echo '<a href="#" class="delete-row" data-id="'.$row["id"].'" title="Delete"><i class="fas fa-trash-alt" style="color:#888;font-size:18px;"></i></a>';
+                echo '</td>';
             }
             echo"</table>";
         }
@@ -527,6 +536,7 @@ $admin = $_SESSION['admin'];
     </main>
 
     <script src="../Javascript_Codes/AdminPage_bookform1script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const addButton = document.getElementById("addbook");
@@ -611,6 +621,63 @@ document.querySelectorAll('#userTable4 tr[data-id]').forEach(row => {
 
         function confirmLogout() {
             window.location.href = 'admin_logout.php';
+        }
+
+        document.querySelectorAll('.approve-booking').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const id = this.dataset.id;
+                Swal.fire({
+                    title: 'Approve this booking?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Approve',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#009688',
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        updateStatus(id, 'hall', 'approved', this);
+                    }
+                });
+            });
+        });
+        document.querySelectorAll('.decline-booking').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const id = this.dataset.id;
+                Swal.fire({
+                    title: 'Decline this booking?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Decline',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#d33',
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        updateStatus(id, 'hall', 'declined', this);
+                    }
+                });
+            });
+        });
+        function updateStatus(id, type, newStatus, btn) {
+            fetch('updateBookingStatus.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `booking_id=${id}&booking_type=${type}&new_status=${newStatus}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const row = btn.closest('tr');
+                    const statusCell = row.querySelector('td:nth-last-child(2) .status-badge');
+                    statusCell.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                    statusCell.className = 'status-badge status-' + newStatus;
+                    btn.parentElement.querySelectorAll('.approve-booking, .decline-booking').forEach(el => el.remove());
+                    Swal.fire({icon:'success',title:'Status updated!',timer:1200,showConfirmButton:false});
+                } else {
+                    Swal.fire({icon:'error',title:'Error',text:data.message||'Failed to update status'});
+                }
+            });
         }
     </script>
   </body>

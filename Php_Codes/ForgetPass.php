@@ -10,9 +10,6 @@
     <title>Update Password</title>
 </head>
 <body>
-    <div>
-        <button type="button" id="back"><span id="spanBtn"></span><a href="../Html_Codes/Userlogin.html"><i class="fas fa-arrow-left"></i></a></button>
-    </div>
     <div class="container">
         <div class="registration form">
             <header>Forget Password</header>

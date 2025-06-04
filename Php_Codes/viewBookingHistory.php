@@ -21,7 +21,7 @@ $query = "(SELECT
             event_date_start as booking_date,
             event_time_start as start_time,
             event_time_end as end_time,
-            'pending' as status,
+            status,
             'hall' as booking_type,
             bookingtime
           FROM bookingform1 
@@ -35,7 +35,7 @@ $query = "(SELECT
             book_date_start as booking_date,
             book_time_start as start_time,
             book_time_end as end_time,
-            'pending' as status,
+            status,
             'sports' as booking_type,
             bookingtime
           FROM bookingform2 
@@ -49,7 +49,7 @@ $query = "(SELECT
             pick_up_date as booking_date,
             pick_up_time as start_time,
             pick_up_time as end_time,
-            'pending' as status,
+            status,
             'transport' as booking_type,
             bookingtime
           FROM bookingform3 
@@ -256,7 +256,7 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div>
-        <button type="button" id="back"><span id="backspan"></span><a href="../Html_Codes/BookingPage.html"><i class="fas fa-arrow-left"></i></a></button>
+        <button type="button" id="back"><span id="backspan"></span><a href="../Php_Codes/BookingPage.php"><i class="fas fa-arrow-left"></i></a></button>
     </div>
 
     <div class="container">
@@ -325,9 +325,19 @@ $result = $stmt->get_result();
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function cancelBooking(bookingId, bookingType) {
-            if (confirm('Are you sure you want to cancel this booking?')) {
+            Swal.fire({
+                title: 'Are you sure you want to cancel this booking?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#009688',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel it',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
                 fetch('cancelBooking.php', {
                     method: 'POST',
                     headers: {
@@ -338,17 +348,30 @@ $result = $stmt->get_result();
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Booking cancelled successfully');
-                        location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking cancelled successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => location.reload());
                     } else {
-                        alert('Error cancelling booking: ' + data.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error cancelling booking.'
+                            });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred while cancelling the booking');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while cancelling the booking.'
+                        });
                 });
             }
+            });
         }
     </script>
 </body>

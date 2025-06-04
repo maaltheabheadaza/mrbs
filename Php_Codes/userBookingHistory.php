@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['email'])) {
+    header('Location: ../Html_Codes/Homepage.html');
+    exit();
+}
+$user_email = $_SESSION['email'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +14,7 @@
     <link rel="stylesheet" href="../Css_Codes/BookingPagestyle.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <title>Check for Date Availability</title>
+    <title>Your Booking History</title>
     <style>
         .footer {
             position: absolute;
@@ -63,13 +71,10 @@
             font-size: 13px;
             color: #aaa;
         }
-
         .blue-column {
             background-color: blue;
             color: white;
         }
-
-                
         #back{
             width:100px;
             padding: 15px 0;
@@ -85,12 +90,12 @@
             position: absolute;
             left: 30px;
             top: 30px;
-          }
-          #back i {
+        }
+        #back i {
             color: #fff;
             font-size: 20px;
-          }
-          #backspan{
+        }
+        #backspan{
             background: #009688;
             height: 100%;
             width: 0%;
@@ -100,27 +105,25 @@
             bottom: 0;
             z-index: -1;
             transition: 0.5s;
-          }
-          #back:hover #backspan{
+        }
+        #back:hover #backspan{
             width: 100%;
-          }
-          #back:hover{
+        }
+        #back:hover{
             border: none;
-          }
+        }
     </style>
 </head>
 <body>
 <div style="padding: 30px 0 0 0;">
-    <button type="button" id="back"><span id="backspan"></span><a href="../Php_Codes/BookingPage.php"><i class="fas fa-arrow-left"></i></a></button>
+    <button type="button" id="back"><span id="backspan"></span><a href="BookingPage.php"><i class="fas fa-arrow-left"></i></a></button>
 </div>
-<h1 style="text-align:center; margin-top: 20px; color: #009688;">Check for Date Availability</h1>
-
+<h1 style="text-align:center; margin-top: 20px; color: #009688;">Your Booking History</h1>
 <div class="tabs">
     <div class="tab active" data-tab="halls">Community Halls</div>
     <div class="tab" data-tab="sports">Sport Facilities</div>
     <div class="tab" data-tab="transport">Public Transportation</div>
 </div>
-
 <!-- Filter Bar -->
 <div class="filter-bar">
     <input type="text" id="searchInput" placeholder="Search by preference, reason, etc...">
@@ -129,7 +132,6 @@
     <button onclick="applyFilters()">Filter</button>
     <button onclick="resetFilters()">Reset</button>
 </div>
-
 <!-- Community Halls Table -->
 <div class="table-container tab-content" id="tab-halls">
     <h2>Community Halls and Centers</h2>
@@ -156,8 +158,11 @@
         if ($conn->connect_error) {
             die("Connection Failed: " . $conn->connect_error);
         }
-        $sql = "SELECT id, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime FROM bookingform1 ORDER BY id DESC";
-        $result = $conn->query($sql);
+        $sql = "SELECT id, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime, status FROM bookingform1 WHERE email = ? ORDER BY id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $user_email);
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $status = 'Upcoming';
@@ -177,16 +182,16 @@
                     "</td><td>" . date('h:i A', strtotime($row["event_time_start"])) .
                     "</td><td>" . date('h:i A', strtotime($row["event_time_end"])) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td><span class='status-badge status-" . strtolower($row["status"] ?? 'pending') . "'>" . ucfirst($row["status"] ?? 'pending') . "</span></td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }
+        $stmt->close();
         $conn->close();
         ?>
         </tbody>
     </table>
 </div>
-
 <!-- Sport Facilities Table -->
 <div class="table-container tab-content" id="tab-sports" style="display:none;">
     <h2>Sport Facilities and Equipment</h2>
@@ -213,8 +218,11 @@
         if ($conn->connect_error) {
             die("Connection Failed: " . $conn->connect_error);
         }
-        $sql = "SELECT id, bookingpreference, reason, book_date_start, book_date_end, book_time_start, book_time_end, sport_equipment, others, bookingtime FROM bookingform2 ORDER BY id DESC";
-        $result = $conn->query($sql);
+        $sql = "SELECT id, bookingpreference, reason, book_date_start, book_date_end, book_time_start, book_time_end, sport_equipment, others, bookingtime, status FROM bookingform2 WHERE email = ? ORDER BY id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $user_email);
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $status = 'Upcoming';
@@ -235,16 +243,16 @@
                     "</td><td>" . date('h:i A', strtotime($row["book_time_end"])) .
                     "</td><td>" . htmlspecialchars($row["sport_equipment"]) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td><span class='status-badge status-" . strtolower($row["status"] ?? 'pending') . "'>" . ucfirst($row["status"] ?? 'pending') . "</span></td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }
+        $stmt->close();
         $conn->close();
         ?>
         </tbody>
     </table>
 </div>
-
 <!-- Public Transportation Table -->
 <div class="table-container tab-content" id="tab-transport" style="display:none;">
     <h2>Public Transportation</h2>
@@ -270,8 +278,11 @@
         if($conn->connect_error) {
             die("Connection Failed: ".$conn->connect_error);
         }
-        $sql = "SELECT id, vehicle_type, reason, pick_up_date, pick_up_time, destination, days_use, others, bookingtime from bookingform3 ORDER BY id DESC";
-        $result = $conn->query($sql);
+        $sql = "SELECT id, vehicle_type, reason, pick_up_date, pick_up_time, destination, days_use, others, bookingtime, status from bookingform3 WHERE email = ? ORDER BY id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $user_email);
+        $stmt->execute();
+        $result = $stmt->get_result();
         if($result->num_rows>0) {
             while($row = $result->fetch_assoc()) {
                 $status = 'Upcoming';
@@ -291,16 +302,16 @@
                     "</td><td>" . htmlspecialchars($row["destination"]) .
                     "</td><td>" . htmlspecialchars($row["days_use"]) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td><span class='status-badge status-" . strtolower($row["status"] ?? 'pending') . "'>" . ucfirst($row["status"] ?? 'pending') . "</span></td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }
+        $stmt->close();
         $conn->close();
         ?>
         </tbody>
     </table>
 </div>
-
 <section class="footer">
     <div class="social">
       <a href="#"><i class="fab fa-instagram"></i></a>
@@ -327,7 +338,6 @@
     </ul>
     <p class="copyright">&copy;AAJBangalao@BSIT-2B</p>
   </section>
-
 <script>
 // Tab switching
 const tabs = document.querySelectorAll('.tab');
@@ -340,7 +350,6 @@ tabs.forEach(tab => {
         document.getElementById('tab-' + tab.dataset.tab).style.display = '';
     });
 });
-
 // Filtering
 function applyFilters() {
     const search = document.getElementById('searchInput').value.toLowerCase();
@@ -377,4 +386,4 @@ function resetFilters() {
 }
 </script>
 </body>
-</html>
+</html> 
