@@ -28,125 +28,138 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $sql = "SELECT * FROM users WHERE email='$email' AND valid_password='$password'";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM users WHERE email=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
-        $_SESSION['email'] = $email;
-        // Show success modal and redirect
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Login Success</title>
-            <style>
-                .modal {
-                    display: block;
-                    position: fixed;
-                    z-index: 1;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0,0,0,0.7);
-                    backdrop-filter: blur(8px);
-                }
-                .modal-content {
-                    background: linear-gradient(145deg, #ffffff, #f8f8f8);
-                    margin: 15% auto;
-                    padding: 35px;
-                    border: none;
-                    width: 80%;
-                    max-width: 400px;
-                    border-radius: 20px;
-                    text-align: center;
-                    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-                    animation: modalFadeIn 0.6s ease-out;
-                    position: relative;
-                    overflow: hidden;
-                }
-                .modal-content::before {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 5px;
-                    background: linear-gradient(90deg, #009688, #00bcd4);
-                }
-                @keyframes modalFadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(-30px);
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['valid_password'])) {
+            $_SESSION['email'] = $email;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['fullname'] = $user['fullname'];
+            
+            // Show success modal and redirect
+            echo '<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Login Success</title>
+                <style>
+                    .modal {
+                        display: block;
+                        position: fixed;
+                        z-index: 1;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0,0,0,0.7);
+                        backdrop-filter: blur(8px);
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
+                    .modal-content {
+                        background: linear-gradient(145deg, #ffffff, #f8f8f8);
+                        margin: 15% auto;
+                        padding: 35px;
+                        border: none;
+                        width: 80%;
+                        max-width: 400px;
+                        border-radius: 20px;
+                        text-align: center;
+                        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+                        animation: modalFadeIn 0.6s ease-out;
+                        position: relative;
+                        overflow: hidden;
                     }
-                }
-                .success-icon {
-                    color: #009688;
-                    font-size: 65px;
-                    margin-bottom: 25px;
-                    animation: scaleIn 0.6s ease-out;
-                    text-shadow: 0 2px 10px rgba(0,150,136,0.2);
-                }
-                @keyframes scaleIn {
-                    0% {
-                        transform: scale(0);
-                        opacity: 0;
+                    .modal-content::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 5px;
+                        background: linear-gradient(90deg, #009688, #00bcd4);
                     }
-                    50% {
-                        transform: scale(1.2);
+                    @keyframes modalFadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-30px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
                     }
-                    100% {
-                        transform: scale(1);
-                        opacity: 1;
+                    .success-icon {
+                        color: #009688;
+                        font-size: 65px;
+                        margin-bottom: 25px;
+                        animation: scaleIn 0.6s ease-out;
+                        text-shadow: 0 2px 10px rgba(0,150,136,0.2);
                     }
-                }
-                .modal-message {
-                    font-size: 26px;
-                    margin-bottom: 20px;
-                    color: #009688;
-                    font-weight: 600;
-                    letter-spacing: 0.5px;
-                    text-transform: uppercase;
-                }
-                .redirect-message {
-                    font-size: 16px;
-                    color: #666;
-                    font-weight: 400;
-                    position: relative;
-                    padding-bottom: 15px;
-                }
-                .redirect-message::after {
-                    content: "";
-                    position: absolute;
-                    bottom: 0;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 50px;
-                    height: 3px;
-                    background: linear-gradient(90deg, #009688, #00bcd4);
-                    border-radius: 3px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="modal">
-                <div class="modal-content">
-                    <div class="success-icon">✓</div>
-                    <div class="modal-message">Login Successful!</div>
-                    <div class="redirect-message">Redirecting to booking page...</div>
+                    @keyframes scaleIn {
+                        0% {
+                            transform: scale(0);
+                            opacity: 0;
+                        }
+                        50% {
+                            transform: scale(1.2);
+                        }
+                        100% {
+                            transform: scale(1);
+                            opacity: 1;
+                        }
+                    }
+                    .modal-message {
+                        font-size: 26px;
+                        margin-bottom: 20px;
+                        color: #009688;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                    }
+                    .redirect-message {
+                        font-size: 16px;
+                        color: #666;
+                        font-weight: 400;
+                        position: relative;
+                        padding-bottom: 15px;
+                    }
+                    .redirect-message::after {
+                        content: "";
+                        position: absolute;
+                        bottom: 0;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 50px;
+                        height: 3px;
+                        background: linear-gradient(90deg, #009688, #00bcd4);
+                        border-radius: 3px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="modal">
+                    <div class="modal-content">
+                        <div class="success-icon">✓</div>
+                        <div class="modal-message">Login Successful!</div>
+                        <div class="redirect-message">Redirecting...</div>
+                    </div>
                 </div>
-            </div>
-            <script>
-                setTimeout(function() {
-                    window.location.href = "../Html_Codes/BookingPage.html";
-                }, 2000);
-            </script>
-        </body>
-        </html>';
-        exit();
+                <script>
+                    setTimeout(function() {
+                        // Check if there\'s a stored redirect URL
+                        window.location.href = ' . (isset($_SESSION['redirect_url']) ? '"' . $_SESSION['redirect_url'] . '"' : '"../Html_Codes/BookingPage.html"') . ';
+                    }, 2000);
+                </script>
+            </body>
+            </html>';
+            exit();
+        } else {
+            echo '<script>alert("Incorrect email or password. Please try again.");</script>';
+            echo '<script>window.location.href = "../Html_Codes/Userlogin.html";</script>';
+        }
     } else {
         echo '<script>alert("Incorrect email or password. Please try again.");</script>';
         echo '<script>window.location.href = "../Html_Codes/Userlogin.html";</script>';
