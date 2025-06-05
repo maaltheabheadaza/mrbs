@@ -141,18 +141,8 @@
                         <input type="email" name="forgot_email" placeholder="Enter your Email" required>
                         <i class="uil uil-envelope icon"></i>
                     </div>
-                    <div class="input-field">
-                        <input type="password" name="forgot_new_password" class="password" placeholder="Enter new password" required>
-                        <i class="uil uil-lock icon"></i>
-                        <i class="uil uil-eye-slash showHidePw"></i>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" name="forgot_confirm_password" class="password" placeholder="Confirm new password" required>
-                        <i class="uil uil-lock icon"></i>
-                        <i class="uil uil-eye-slash showHidePw"></i>
-                    </div>
                     <div class="input-field button">
-                        <input type="submit" value="Update Password">
+                        <input type="submit" value="Verify Email">
                     </div>
                 </form>
                 <div class="login-signup">
@@ -244,6 +234,53 @@
                     icon: "error",
                     title: "Registration Failed",
                     text: "An error occurred during registration. Please try again.",
+                    confirmButtonColor: "#009688"
+                });
+            });
+        });
+        // Forgot Password OTP Request
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.querySelector('input[name="forgot_email"]').value.trim();
+            if (!email) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Missing Email",
+                    text: "Please enter your email address.",
+                    confirmButtonColor: "#009688"
+                });
+                return;
+            }
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            const formData = new FormData();
+            formData.append('email', email);
+            fetch('../Php_Codes/request_reset_otp.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                if (data.success) {
+                    window.location.href = `../Php_Codes/ForgetPass.php?email=${encodeURIComponent(email)}`;
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: data.message || 'Failed to send OTP. Please try again.',
+                        confirmButtonColor: "#009688"
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred. Please try again.",
                     confirmButtonColor: "#009688"
                 });
             });

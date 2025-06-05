@@ -8,12 +8,25 @@
     font-family: "Poppins" , sans-serif;
   }
   
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .banner {
   width: 100%;
   height: 100vh;
   background-image: linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)), url("https://assets-global.website-files.com/6009ec8cda7f305645c9d91b/60107f9c58f4bb476b10caa8_6002086f72b72769e701e207_online-booking-system.jpeg");
   background-size: cover;
   background-position: center;
+  flex: 1 0 auto;
 }
 
 .navbar {
@@ -84,9 +97,7 @@
 
 #about{
 	width:100%;
-	height: 70vh;
-  margin-top: -55px;
-  margin-bottom: 62px;
+	height: 84vh;
 	box-sizing: border-box;
 	display: flex;
 	align-items: center;
@@ -150,9 +161,9 @@
 }
 
 .footer {
-  
   padding: 30px 0;
   background-color: #009688;
+  flex-shrink: 0;
 }
 .footer .social {
   text-align: center;

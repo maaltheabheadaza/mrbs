@@ -24,12 +24,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
         $conn->close();
-        echo json_encode([
-            'success' => true,
-            'message' => 'Password updated successfully! You can now log in.',
-            'redirect' => '../Html_Codes/Userlogin.html'
-        ]);
-        exit;
+        // Update password in external API using resetPassword (with OTP and new password)
+        $resetResponse = $auth_api->resetPassword($otp, $new_password);
+        if ($resetResponse['status'] === 200 && isset($resetResponse['data']['success']) && $resetResponse['data']['success']) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Password updated successfully! You can now log in.',
+                'redirect' => '../Html_Codes/Userlogin.html'
+            ]);
+            exit;
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Password updated locally, but failed to update in external API: ' . ($resetResponse['data']['message'] ?? 'Unknown error') . ' | Raw: ' . json_encode($resetResponse)
+            ]);
+            exit;
+        }
     } else {
         echo json_encode([
             'success' => false,

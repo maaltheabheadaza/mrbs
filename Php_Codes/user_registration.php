@@ -111,6 +111,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPL
 
 // Call external API to register user and get OTP
 $registerResponse = $auth_api->register($email, $password, $fullname);
+error_log('External API register response: ' . print_r($registerResponse, true));
 $otp = null;
 if ($registerResponse['status'] === 200 && isset($registerResponse['data']['success']) && $registerResponse['data']['success']) {
     // Try to get OTP from response
@@ -156,8 +157,9 @@ if ($registerResponse['status'] === 200 && isset($registerResponse['data']['succ
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
-        'message' => 'Registration failed!',
+        'message' => 'Registration failed! ' . ($registerResponse['data']['message'] ?? 'Unknown error'),
         'error' => $registerResponse['data']['message'] ?? 'Unknown error',
+        'raw' => $registerResponse,
         'redirect' => '../Html_Codes/Userlogin.html'
     ]);
     exit;

@@ -112,11 +112,12 @@
                 if (data.success) {
                     Swal.fire({
                         icon: "success",
-                        title: "Password Updated!",
+                        title: "OTP Verified!",
                         text: data.message,
                         confirmButtonColor: "#009688"
                     }).then(() => {
-                        window.location.href = data.redirect;
+                        // Redirect to ForgetPass.php with email and otp in query string
+                        window.location.href = `../Php_Codes/ForgetPass.php?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`;
                     });
                 } else {
                     Swal.fire({
