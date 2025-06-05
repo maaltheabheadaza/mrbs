@@ -3,16 +3,9 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "user_info";
+require_once __DIR__ . '/../auth_api.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$auth_api = new UserAuthAPI('ak_9b668ca54c3669ef57fe218fa4f51773');
 
 header('Content-Type: application/json');
 
@@ -35,41 +28,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $sql = "SELECT * FROM users WHERE email=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Call external API to login
+    $loginResponse = $auth_api->login($email, $password);
 
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['valid_password'])) {
+    if ($loginResponse['status'] === 200 && isset($loginResponse['data']['success']) && $loginResponse['data']['success']) {
+        // Get user data from local database for additional information
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "user_info";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql = "SELECT * FROM users WHERE email=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
             $_SESSION['email'] = $email;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['fullname'] = $user['fullname'];
+            $_SESSION['auth_token'] = $loginResponse['data']['data']['auth_token'];
+            $_SESSION['token_expires'] = $loginResponse['data']['data']['expires_at'];
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Login Successful!',
+                'data' => [
+                    'user_id' => $user['id'],
+                    'email' => $email,
+                    'fullname' => $user['fullname'],
+                    'auth_token' => $loginResponse['data']['data']['auth_token'],
+                    'expires_at' => $loginResponse['data']['data']['expires_at']
+                ],
                 'redirect' => '../Php_Codes/BookingPage.php'
             ]);
             exit();
-        } else {
-            echo json_encode([
-                'success' => false,
-                'error' => 'wrong_password',
-                'message' => 'Incorrect email or password. Please try again.'
-            ]);
-            exit();
         }
+        $conn->close();
     } else {
         echo json_encode([
             'success' => false,
-            'error' => 'wrong_email',
+            'error' => 'login_failed',
             'message' => 'Incorrect email or password. Please try again.'
         ]);
         exit();
     }
 }
-
-$conn->close();
 ?>
