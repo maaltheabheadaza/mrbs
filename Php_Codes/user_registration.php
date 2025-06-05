@@ -1,164 +1,165 @@
 <?php
-    require __DIR__ . '/../vendor/autoload.php';
-    use Cloudinary\Cloudinary;
-    use Dotenv\Dotenv;
-    use Google\Client;
-    use Google\Service\Gmail;
-    use Google\Service\Gmail\Message;
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+require_once __DIR__ . '/../auth_api.php';
+require __DIR__ . '/../vendor/autoload.php';
+use Cloudinary\Cloudinary;
+use Dotenv\Dotenv;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-    // Load environment variables
-    $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-    $dotenv->load();
+// Load environment variables
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
 
-    // Configure Cloudinary directly
-    $cloudinary = new Cloudinary([
-        'cloud' => [
-            'cloud_name' => $_ENV['CLOUDINARY_CLOUD_NAME'],
-            'api_key' => $_ENV['CLOUDINARY_API_KEY'],
-            'api_secret' => $_ENV['CLOUDINARY_API_SECRET']
-        ]
-    ]);
+// Configure Cloudinary directly
+$cloudinary = new Cloudinary([
+    'cloud' => [
+        'cloud_name' => $_ENV['CLOUDINARY_CLOUD_NAME'],
+        'api_key' => $_ENV['CLOUDINARY_API_KEY'],
+        'api_secret' => $_ENV['CLOUDINARY_API_SECRET']
+    ]
+]);
 
-    $fullname = $_POST['fullname'];
+session_start();
+$auth_api = new UserAuthAPI('ak_9b668ca54c3669ef57fe218fa4f51773');
+
+// If OTP is being submitted
+if (isset($_POST['otp']) && isset($_POST['email'])) {
     $email = $_POST['email'];
+    $otp = $_POST['otp'];
+    $fullname = $_POST['fullname'];
     $contactNumber = $_POST['contact_number'];
     $address = $_POST['full_address'];
     $password = $_POST['valid_password'];
-    $confirmPassword = $_POST['confirm_password'];
+    $imageUrl = isset($_POST['profile_image_url']) ? $_POST['profile_image_url'] : null;
 
-    // Check if passwords match
-    if ($password !== $confirmPassword) {
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => false,
-            'message' => 'Passwords do not match!',
-            'error' => 'password_mismatch'
-        ]);
-        exit;
-    }
-
-    // Hash the password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    $conn = new mysqli('localhost', 'root', '', 'user_info');
-    if($conn->connect_error) {
-        die("Connection Failed: " .$conn->connect_error);
-    } else {
-        // Check if email already exists
-        $checkEmail = $conn->prepare("SELECT email FROM users WHERE email = ?");
-        $checkEmail->bind_param("s", $email);
-        $checkEmail->execute();
-        $result = $checkEmail->get_result();
-        
-        if($result->num_rows > 0) {
-            // Email already exists
-            error_log("Email exists check: Email " . $email . " already exists in database");
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => 'Email already exists!',
-                'error' => 'email_exists'
-            ]);
-            $checkEmail->close();
-            $conn->close();
-            exit;
+    $verifyResponse = $auth_api->verifyEmail($email, $otp);
+    if ($verifyResponse['status'] === 200 && isset($verifyResponse['data']['success']) && $verifyResponse['data']['success']) {
+        // OTP verified, insert user into local DB
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $conn = new mysqli('localhost', 'root', '', 'user_info');
+        if ($conn->connect_error) {
+            die(json_encode(['success' => false, 'message' => 'Connection Failed: ' . $conn->connect_error, 'redirect' => '../Html_Codes/Userlogin.html']));
         }
-        error_log("Email exists check: Email " . $email . " is available");
-        $checkEmail->close();
-
-        // Handle image upload
-        $imageUrl = null;
-        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-            $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
-                'folder' => 'user_profiles'
-            ]);
-            $imageUrl = $uploadResult['secure_url'];
-        }
-
-        $stmt = $conn->prepare("INSERT into users (fullname, email, contact_number, full_address, valid_password, profile_image)
-         VALUES (?, ?, ?, ?, ?, ?)");
-
+        $stmt = $conn->prepare("INSERT INTO users (fullname, email, contact_number, full_address, valid_password, profile_image) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssisss", $fullname, $email, $contactNumber, $address, $hashedPassword, $imageUrl);
-
         $stmt->execute();
-
-        // Send confirmation email using Gmail API
-        try {
-            // Create Gmail API client
-            $client = new Client();
-            $client->setAuthConfig(__DIR__ . '/../credentials.json');
-            $client->addScope(Gmail::GMAIL_SEND);
-            $client->setRedirectUri('http://localhost/mrbs/Php_Codes/oauth2callback.php');
-            $client->setAccessType('offline');
-            $client->setPrompt('consent');
-            
-            // Load token from file
-            $tokenPath = __DIR__ . '/../token.json';
-            if (file_exists($tokenPath)) {
-                $accessToken = json_decode(file_get_contents($tokenPath), true);
-                $client->setAccessToken($accessToken);
-            }
-
-            // If we don't have a token or it's expired, redirect to OAuth flow
-            if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
-                if ($client->getRefreshToken()) {
-                    $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-                    file_put_contents($tokenPath, json_encode($client->getAccessToken()));
-                } else {
-                    // Redirect to OAuth flow
-                    $auth_url = $client->createAuthUrl();
-                    header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
-                    exit;
-                }
-            }
-
-            // Create Gmail service
-            $service = new Gmail($client);
-
-            // Build the email headers and body
-            $from = $_ENV['GMAIL_USERNAME'];
-            $to = $email; // recipient's email from registration form
-            $subject = 'Registration Confirmation';
-            $body = "Dear " . htmlspecialchars($fullname) . ",<br><br>"
-                  . "Thank you for registering with the Municipality Resource Booking System!<br><br>"
-                  . "Your account has been successfully created. You can now log in to access our services.<br><br>"
-                  . "Best regards,<br>MRBS Team";
-
-            $rawMessage = "From: Municipality Resource Booking System <{$from}>\r\n";
-            $rawMessage .= "To: {$fullname} <{$to}>\r\n";
-            $rawMessage .= "Subject: =?utf-8?B?" . base64_encode($subject) . "?=\r\n";
-            $rawMessage .= "MIME-Version: 1.0\r\n";
-            $rawMessage .= "Content-Type: text/html; charset=utf-8\r\n";
-            $rawMessage .= "Content-Transfer-Encoding: base64\r\n\r\n";
-            $rawMessage .= base64_encode($body);
-
-            $message = new Message();
-            $message->setRaw(strtr(base64_encode($rawMessage), ['+' => '-', '/' => '_'])); // Gmail API safe encoding
-
-            // Send email
-            $service->users_messages->send('me', $message);
-        } catch (Exception $e) {
-            // Log the error
-            error_log('Gmail API Error: ' . $e->getMessage());
-        }
-
         $stmt->close();
         $conn->close();
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Registration and OTP verification successful!', 'redirect' => '../Html_Codes/Userlogin.html']);
+        exit;
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'OTP verification failed!', 'error' => $verifyResponse['data']['message'] ?? 'Unknown error', 'redirect' => '../Html_Codes/Userlogin.html']);
+        exit;
+    }
+}
 
-        // Check if the request is AJAX
-        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-            // Set JSON content type header
-            header('Content-Type: application/json');
-            // Return JSON response for AJAX request
-            echo json_encode([
-                'success' => true,
-                'message' => 'Registration successful!',
-                'redirect' => '../Html_Codes/Userlogin.html'
-            ]);
-        } else {
-            // For non-AJAX requests, redirect directly
-            header('Location: ../Html_Codes/Userlogin.html');
-            exit;
-        }
-    }   
+// Initial registration request
+$fullname = $_POST['fullname'];
+$email = $_POST['email'];
+$contactNumber = $_POST['contact_number'];
+$address = $_POST['full_address'];
+$password = $_POST['valid_password'];
+$confirmPassword = $_POST['confirm_password'];
+
+// Check if passwords match
+if ($password !== $confirmPassword) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Passwords do not match!',
+        'error' => 'password_mismatch',
+        'redirect' => '../Html_Codes/Userlogin.html'
+    ]);
+    exit;
+}
+
+$conn = new mysqli('localhost', 'root', '', 'user_info');
+if ($conn->connect_error) {
+    die(json_encode(['success' => false, 'message' => 'Connection Failed: ' . $conn->connect_error, 'redirect' => '../Html_Codes/Userlogin.html']));
+}
+// Check if email already exists
+$checkEmail = $conn->prepare("SELECT email FROM users WHERE email = ?");
+$checkEmail->bind_param("s", $email);
+$checkEmail->execute();
+$result = $checkEmail->get_result();
+if ($result->num_rows > 0) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Email already exists!',
+        'error' => 'email_exists',
+        'redirect' => '../Html_Codes/Userlogin.html'
+    ]);
+    $checkEmail->close();
+    $conn->close();
+    exit;
+}
+$checkEmail->close();
+
+// Handle image upload
+$imageUrl = null;
+if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+    $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
+        'folder' => 'user_profiles'
+    ]);
+    $imageUrl = $uploadResult['secure_url'];
+}
+
+// Call external API to register user and get OTP
+$registerResponse = $auth_api->register($email, $password, $fullname);
+$otp = null;
+if ($registerResponse['status'] === 200 && isset($registerResponse['data']['success']) && $registerResponse['data']['success']) {
+    // Try to get OTP from response
+    if (isset($registerResponse['data']['otp'])) {
+        $otp = $registerResponse['data']['otp'];
+    } elseif (isset($registerResponse['data']['data']['otp'])) {
+        $otp = $registerResponse['data']['data']['otp'];
+    }
+    // Send OTP email using PHPMailer
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'almackieandrew.bangalao@gmail.com';
+        $mail->Password = 'tcfg yhrq etjs ywts';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->setFrom('almackieandrew.bangalao@gmail.com', 'Municipality Resource Booking System');
+        $mail->addAddress($email, $fullname);
+        $mail->isHTML(true);
+        $mail->Subject = 'Your OTP Code for Registration';
+        $mail->Body = "<div style='font-family: Arial, sans-serif; color: #222;'><h2 style='color: #009688;'>Municipality Resource Booking System</h2><p>Dear $fullname,</p><p>Thank you for registering with us!</p><p>Your One-Time Password (OTP) for registration is:</p><div style='font-size: 2em; font-weight: bold; color: #009688; margin: 20px 0;'>$otp</div><p>Please enter this code on the verification page to complete your registration.</p><p>If you did not request this, please ignore this email.</p><br><p style='color: #888;'>Best regards,<br>MRBS Team</p></div>";
+        $mail->send();
+        $emailSent = true;
+    } catch (Exception $e) {
+        $emailSent = false;
+    }
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'message' => $emailSent ? 'Registration successful! Please check your email for the OTP.' : 'Registration successful, but failed to send OTP email.',
+        'require_otp' => true,
+        'email' => $email,
+        'fullname' => $fullname,
+        'contact_number' => $contactNumber,
+        'full_address' => $address,
+        'valid_password' => $password,
+        'profile_image_url' => $imageUrl
+    ]);
+    exit;
+} else {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Registration failed!',
+        'error' => $registerResponse['data']['message'] ?? 'Unknown error',
+        'redirect' => '../Html_Codes/Userlogin.html'
+    ]);
+    exit;
+}
 ?>

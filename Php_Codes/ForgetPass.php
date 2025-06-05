@@ -30,6 +30,50 @@
         </div>
     </div>
 
+    <style>
+      #loadingOverlay2 {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+      }
+      #loadingOverlay2 .loader-box {
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        text-align: center;
+        font-size: 1.2em;
+        color: #009688;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #loadingOverlay2 .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #009688;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 18px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    <div id="loadingOverlay2">
+      <div class="loader-box">
+        <div class="spinner"></div>
+        <span>Processing your password reset...</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const passwordInputs = document.querySelectorAll('.password-input input[type="password"]');
@@ -41,7 +85,54 @@
                 toggleEye.classList.toggle('fa-eye-slash');
             });
         });
+
+        const form = document.querySelector('form[action="update_password.php"]');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('loadingOverlay2').style.display = 'flex';
+            const formData = new FormData(form);
+            fetch('update_password.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.require_otp) {
+                    window.location.href = `verify_otp_reset.html?email=${encodeURIComponent(data.email)}&new_password=${encodeURIComponent(data.new_password)}`;
+                } else if (data.success) {
+                    document.getElementById('loadingOverlay2').style.display = 'none';
+                    Swal.fire({
+                        icon: "success",
+                        title: "Password Updated!",
+                        text: data.message,
+                        confirmButtonColor: "#009688"
+                    }).then(() => {
+                        window.location.href = "Userlogin.html";
+                    });
+                } else {
+                    document.getElementById('loadingOverlay2').style.display = 'none';
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: data.message || 'Unknown error',
+                        confirmButtonColor: "#009688"
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingOverlay2').style.display = 'none';
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred. Please try again.",
+                    confirmButtonColor: "#009688"
+                });
+            });
+        });
     });
-</script>
+    </script>
 </body>
 </html>

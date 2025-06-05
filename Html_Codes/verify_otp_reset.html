@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Password Reset</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../Css_Codes/Userloginstyle.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('../Images/bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        .blur-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+        .otp-container {
+            position: fixed;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 40px 30px 30px 30px;
+            z-index: 2;
+            min-width: 320px;
+            text-align: center;
+        }
+        .otp-container h2 {
+            color: #009688;
+            margin-bottom: 10px;
+        }
+        .otp-container p {
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .otp-input {
+            font-size: 1.5em;
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            text-align: center;
+            letter-spacing: 8px;
+        }
+        .otp-btn {
+            background: #009688;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .otp-btn:hover {
+            background: #00796b;
+        }
+    </style>
+</head>
+<body>
+    <div class="blur-bg"></div>
+    <div class="otp-container">
+        <h2>OTP Verification</h2>
+        <p id="otp-desc">Please enter the One-Time Password (OTP) sent to your email to complete your password reset.</p>
+        <form id="otpForm">
+            <input type="text" id="otpInput" class="otp-input" maxlength="6" placeholder="Enter OTP" required autofocus>
+            <br>
+            <button type="submit" class="otp-btn">Verify OTP</button>
+        </form>
+        <p style="margin-top:20px; color:#888; font-size:0.95em;">Didn't receive the code? Check your spam folder or <a href="#" id="resendLink">resend</a>.</p>
+    </div>
+    <script>
+        // Parse query parameters
+        function getQueryParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+        const email = getQueryParam('email');
+        const new_password = getQueryParam('new_password');
+        document.getElementById('otp-desc').innerHTML = `Please enter the One-Time Password (OTP) sent to <b>${email}</b> to complete your password reset.`;
+
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otpInput').value.trim();
+            if (!otp) {
+                Swal.fire('Error', 'Please enter the OTP.', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('otp', otp);
+            formData.append('email', email);
+            formData.append('new_password', new_password);
+            fetch('../Php_Codes/verify_reset_otp.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Password Updated!",
+                        text: data.message,
+                        confirmButtonColor: "#009688"
+                    }).then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "OTP Verification Failed",
+                        text: data.message || 'Invalid OTP',
+                        confirmButtonColor: "#009688"
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "OTP Verification Failed",
+                    text: "An error occurred during OTP verification. Please try again.",
+                    confirmButtonColor: "#009688"
+                });
+            });
+        });
+        // Optionally, implement resend OTP logic here
+        document.getElementById('resendLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire('Resend OTP', 'Please try the password reset process again to receive a new OTP.', 'info');
+        });
+    </script>
+</body>
+</html> 
