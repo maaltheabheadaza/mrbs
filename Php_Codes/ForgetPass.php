@@ -13,8 +13,19 @@
     <div class="container">
         <div class="registration form">
             <header>Forget Password</header>
-            <form action="update_password.php" method="POST">
-                <input type="email" name="email" placeholder="Enter your email" required>
+            <?php if (isset($_GET['email'])): ?>
+            <div style="margin-bottom: 18px; color: #444; font-size: 1.05em; text-align: center;">
+                An OTP has been sent to <b><?php echo htmlspecialchars($_GET['email']); ?></b>.<br>
+                Please enter the OTP and your new password below to reset your password.
+            </div>
+            <?php endif; ?>
+            <form action="verify_reset_otp.php" method="POST">
+                <?php if (isset($_GET['email'])): ?>
+                <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
+                <?php endif; ?>
+                <div class="input-field">
+                    <input type="text" name="otp" placeholder="Enter OTP" required value="<?php echo isset($_GET['otp']) ? htmlspecialchars($_GET['otp']) : ''; ?>">
+                </div>
                 <div class="password-input">
                     <input type="password" name="new_password" placeholder="Create a new password" required>
                     <i class="fas fa-eye" id="togglePassword1"></i>
@@ -86,12 +97,12 @@
             });
         });
 
-        const form = document.querySelector('form[action="update_password.php"]');
+        const form = document.querySelector('form[action="verify_reset_otp.php"]');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             document.getElementById('loadingOverlay2').style.display = 'flex';
             const formData = new FormData(form);
-            fetch('update_password.php', {
+            fetch('verify_reset_otp.php', {
                 method: 'POST',
                 body: formData,
                 headers: {

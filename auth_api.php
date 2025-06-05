@@ -189,15 +189,12 @@ class UserAuthAPI {
     }
 
     public function resetPassword($otp, $newPassword) {
-        // Get the stored auth token from session
-        $authToken = isset($_SESSION['reset_auth_token']) ? $_SESSION['reset_auth_token'] : null;
-        
-        // Set up headers with the auth token
+        // Send the OTP as a Bearer token in the Authorization header
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
             'X-Api-Key: ' . $this->apiKey,
-            'Authorization: ' . $authToken
+            'Authorization: Bearer ' . $otp
         ];
 
         $ch = curl_init($this->baseUrl . '/api/reset-password.php');
@@ -239,11 +236,6 @@ class UserAuthAPI {
                     'message' => 'Invalid response from server'
                 ]
             ];
-        }
-        
-        // Clear the reset token after successful password reset
-        if ($httpCode === 200 && isset($responseData['success']) && $responseData['success']) {
-            unset($_SESSION['reset_auth_token']);
         }
         
         return [
@@ -370,6 +362,13 @@ class UserAuthAPI {
         
         error_log("=== LOGIN REQUEST END ===\n");
         return $response;
+    }
+
+    public function deleteUserByEmail($email) {
+        $data = [
+            'email' => $email
+        ];
+        return $this->sendRequest('/api/delete-user.php', $data);
     }
 }
 

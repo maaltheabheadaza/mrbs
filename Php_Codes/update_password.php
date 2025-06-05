@@ -1,9 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../auth_api.php';
-require __DIR__ . '/../vendor/autoload.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+header('Content-Type: application/json');
 
 $host = 'localhost';
 $dbname = 'user_info'; 
@@ -14,15 +12,18 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'message' => 'Connection failed: ' . $e->getMessage()
+    ]);
+    exit;
 }
-
-header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
+    $otp = $_POST['otp']; // Get the OTP from the form
 
     if ($new_password !== $confirm_password) {
         echo json_encode([
@@ -33,50 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Call external API to request OTP for password reset
-    $auth_api = new UserAuthAPI('ak_9b668ca54c3669ef57fe218fa4f51773');
-    $otpResponse = $auth_api->requestOTP($email, 'password-reset');
-    $otp = null;
-    if ($otpResponse['status'] === 200 && isset($otpResponse['data']['success']) && $otpResponse['data']['success']) {
-        if (isset($otpResponse['data']['otp'])) {
-            $otp = $otpResponse['data']['otp'];
-        } elseif (isset($otpResponse['data']['data']['otp'])) {
-            $otp = $otpResponse['data']['data']['otp'];
-        }
-        // Send OTP email using PHPMailer
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'almackieandrew.bangalao@gmail.com';
-            $mail->Password = 'tcfg yhrq etjs ywts';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-            $mail->setFrom('almackieandrew.bangalao@gmail.com', 'Municipality Resource Booking System');
-            $mail->addAddress($email);
-            $mail->isHTML(true);
-            $mail->Subject = 'Your OTP Code for Password Reset';
-            $mail->Body = "<div style='font-family: Arial, sans-serif; color: #222;'><h2 style='color: #009688;'>Municipality Resource Booking System</h2><p>Dear User,</p><p>Your One-Time Password (OTP) for password reset is:</p><div style='font-size: 2em; font-weight: bold; color: #009688; margin: 20px 0;'>$otp</div><p>Please enter this code on the verification page to complete your password reset.</p><p>If you did not request this, please ignore this email.</p><br><p style='color: #888;'>Best regards,<br>MRBS Team</p></div>";
-            $mail->send();
-            $emailSent = true;
-        } catch (Exception $e) {
-            $emailSent = false;
-        }
-        echo json_encode([
-            'require_otp' => true,
-            'message' => $emailSent ? 'OTP sent to your email.' : 'OTP generated, but failed to send email.',
-            'email' => $email,
-            'new_password' => $new_password
-        ]);
-        exit;
-    } else {
-        echo json_encode([
-            'success' => false,
-            'error' => 'otp_failed',
-            'message' => $otpResponse['data']['message'] ?? 'Failed to generate OTP.'
-        ]);
-        exit;
-    }
+    // Update local DB only
+    $hashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("UPDATE users SET valid_password = ? WHERE email = ?");
+    $stmt->execute([$hashedPassword, $email]);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Password updated successfully! You can now log in.'
+    ]);
+    exit;
 }
 ?>
