@@ -1,63 +1,33 @@
 <?php
-require_once __DIR__ . '/../auth_api.php';
-require __DIR__ . '/../vendor/autoload.php';
+// This script is now obsolete. Password reset uses the OTP directly in ForgetPass.php.
+// No logic needed here.
 
-header('Content-Type: application/json');
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $otp = $_POST['otp'];
     $new_password = $_POST['new_password'];
 
     $auth_api = new UserAuthAPI('ak_9b668ca54c3669ef57fe218fa4f51773');
     $verifyResponse = $auth_api->verifyEmail($email, $otp); // Use verifyEmail for OTP verification
-    error_log('OTP VERIFY RESPONSE: ' . print_r($verifyResponse, true));
-    if ($verifyResponse['status'] === 200 && isset($verifyResponse['data']['success']) && $verifyResponse['data']['success']) {
-        // Check for reset token in the response
-        $resetToken = null;
-        if (isset($verifyResponse['data']['reset_token'])) {
-            $resetToken = $verifyResponse['data']['reset_token'];
-        } elseif (isset($verifyResponse['data']['token'])) {
-            $resetToken = $verifyResponse['data']['token'];
-        }
-        // OTP verified, update password in local DB
-        $hashedPassword = password_hash($new_password, PASSWORD_DEFAULT);
-        $conn = new mysqli('localhost', 'root', '', 'user_info');
-        if ($conn->connect_error) {
-            echo json_encode(['success' => false, 'message' => 'Connection Failed: ' . $conn->connect_error]);
-            exit;
-        }
-        $stmt = $conn->prepare("UPDATE users SET valid_password = ? WHERE email = ?");
-        $stmt->bind_param("ss", $hashedPassword, $email);
-        $stmt->execute();
-        $stmt->close();
-        $conn->close();
-        // Show the reset token in the response for debugging
-        if ($resetToken) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'OTP verified! Use this reset token for password reset: ' . $resetToken,
-                'reset_token' => $resetToken
-            ]);
-            exit;
-        }
-        // Update password in external API using resetPassword (with OTP and new password)
-        $resetResponse = $auth_api->resetPassword($otp, $new_password);
-        error_log('RESET PASSWORD RESPONSE: ' . print_r($resetResponse, true));
-        if ($resetResponse['status'] === 200 && isset($resetResponse['data']['success']) && $resetResponse['data']['success']) {
-            echo json_encode([
-                'success' => true,
-                'message' => 'Password updated successfully! You can now log in.',
-                'redirect' => '../Html_Codes/Userlogin.html'
-            ]);
-            exit;
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Password updated locally, but failed to update in external API: ' . ($resetResponse['data']['message'] ?? 'Unknown error') . ' | Raw: ' . json_encode($resetResponse)
-            ]);
-            exit;
-        }
+    error_log('OTP Verify Response: ' . print_r($verifyResponse, true));
+    // If OTP is verified, generate and return a reset token
+    if (
+        $verifyResponse['status'] === 200 &&
+        (
+            (isset($verifyResponse['data']['success']) && $verifyResponse['data']['success']) ||
+            (isset($verifyResponse['data']['message']) && $verifyResponse['data']['message'] === 'Email is already verified')
+        )
+    ) {
+        // Generate a secure random token
+        $reset_token = bin2hex(random_bytes(32));
+        $_SESSION['reset_token'] = $reset_token;
+        error_log('SESSION ID (verify_reset_otp.php): ' . session_id());
+        error_log('Generated reset_token: ' . $reset_token);
+        echo json_encode([
+            'success' => true,
+            'reset_token' => $reset_token,
+            'message' => 'OTP verified. Use this token to reset your password.'
+        ]);
+        exit;
     } else {
         echo json_encode([
             'success' => false,
@@ -65,5 +35,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ]);
         exit;
     }
-}
+
 ?> 

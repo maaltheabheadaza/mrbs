@@ -189,7 +189,7 @@ class UserAuthAPI {
     }
 
     public function resetPassword($otp, $newPassword) {
-        // Send the OTP as a Bearer token in the Authorization header
+        // Use OTP as Bearer token and as POST body
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
@@ -197,20 +197,31 @@ class UserAuthAPI {
             'Authorization: Bearer ' . $otp
         ];
 
-        $ch = curl_init($this->baseUrl . '/api/reset-password.php');
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        $body = [
             'otp' => $otp,
             'new_password' => $newPassword
-        ]));
+        ];
+        error_log("[resetPassword] Using " . (strlen($otp) >= 13 ? 'reset token' : 'OTP') . " (Bearer and body): $otp, new_password: $newPassword");
+
+        error_log("[resetPassword] Sending password reset to API:");
+        error_log("[resetPassword] Endpoint: " . $this->baseUrl . '/api/reset-password.php');
+        error_log("[resetPassword] Headers: " . print_r($headers, true));
+        error_log("[resetPassword] Body: " . json_encode($body));
+
+        $ch = curl_init($this->baseUrl . '/api/reset-password.php');
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        
+
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
+
+        error_log("[resetPassword] API response code: $httpCode");
+        error_log("[resetPassword] API response: $response");
+
         if ($response === false) {
             $error = curl_error($ch);
             curl_close($ch);
@@ -223,7 +234,7 @@ class UserAuthAPI {
                 ]
             ];
         }
-        
+
         curl_close($ch);
 
         $responseData = json_decode($response, true);
@@ -237,7 +248,7 @@ class UserAuthAPI {
                 ]
             ];
         }
-        
+
         return [
             'status' => $httpCode,
             'data' => $responseData

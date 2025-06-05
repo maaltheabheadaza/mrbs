@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (isset($_GET['reset_token'])) {
+    $_SESSION['reset_token'] = $_GET['reset_token'];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,16 +22,12 @@
             <?php if (isset($_GET['email'])): ?>
             <div style="margin-bottom: 18px; color: #444; font-size: 1.05em; text-align: center;">
                 An OTP has been sent to <b><?php echo htmlspecialchars($_GET['email']); ?></b>.<br>
-                Please enter the OTP and your new password below to reset your password.
+                Please enter the OTP you received in your email, along with your new password, to reset your password.
             </div>
             <?php endif; ?>
-            <form action="verify_reset_otp.php" method="POST">
-                <?php if (isset($_GET['email'])): ?>
-                <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
-                <?php endif; ?>
-                <div class="input-field">
-                    <input type="text" name="otp" placeholder="Enter OTP" required value="<?php echo isset($_GET['otp']) ? htmlspecialchars($_GET['otp']) : ''; ?>">
-                </div>
+            <form id="resetPasswordForm" action="update_password.php" method="POST" onsubmit="return validatePasswordStrength();">
+                <input type="hidden" name="email" value="<?php echo isset($_GET['email']) ? htmlspecialchars($_GET['email']) : ''; ?>">
+
                 <div class="password-input">
                     <input type="password" name="new_password" placeholder="Create a new password" required>
                     <i class="fas fa-eye" id="togglePassword1"></i>
@@ -36,10 +38,63 @@
                     <i class="fas fa-eye" id="togglePassword2"></i>
                     <i class="fas fa-eye-slash" id="togglePassword2Slash" style="display: none;"></i>
                 </div>
+                <div class="otp-input">
+                    <input type="text" name="otp" placeholder="Enter OTP (6-digit) or reset token from your email" required>
+                    <div style="font-size: 0.95em; color: #666; margin-top: 4px;">Enter the 6-digit OTP <b>or</b> the reset token from your email, if provided.</div>
+                </div>
+                <div id="passwordError" style="color: #d32f2f; margin-bottom: 12px; display: none;"></div>
                 <input type="submit" class="button" value="Update Password">
             </form>
         </div>
     </div>
+
+    <script>
+    function validatePasswordStrength() {
+        var password = document.querySelector('input[name="new_password"]').value;
+        var confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+        var errorDiv = document.getElementById('passwordError');
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+
+        var minLength = 8;
+        var uppercase = /[A-Z]/;
+        var lowercase = /[a-z]/;
+        var number = /[0-9]/;
+        var special = /[!@#$%^&*(),.?":{}|<>\[\]\\/~`_+=;'\-]/;
+
+        if (password.length < minLength) {
+            errorDiv.textContent = 'Password must be at least 8 characters.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        if (!uppercase.test(password)) {
+            errorDiv.textContent = 'Password must contain at least one uppercase letter.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        if (!lowercase.test(password)) {
+            errorDiv.textContent = 'Password must contain at least one lowercase letter.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        if (!number.test(password)) {
+            errorDiv.textContent = 'Password must contain at least one number.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        if (!special.test(password)) {
+            errorDiv.textContent = 'Password must contain at least one special character (!@#$%^&* etc.).';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        if (password !== confirmPassword) {
+            errorDiv.textContent = 'Passwords do not match.';
+            errorDiv.style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+    </script>
 
     <style>
       #loadingOverlay2 {
@@ -97,34 +152,32 @@
             });
         });
 
-        const form = document.querySelector('form[action="verify_reset_otp.php"]');
+        const form = document.getElementById('resetPasswordForm');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             document.getElementById('loadingOverlay2').style.display = 'flex';
             const formData = new FormData(form);
-            fetch('verify_reset_otp.php', {
+            fetch('update_password.php', {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
-                }
+                },
+                credentials: 'same-origin'
             })
             .then(response => response.json())
             .then(data => {
-                if (data.require_otp) {
-                    window.location.href = `verify_otp_reset.html?email=${encodeURIComponent(data.email)}&new_password=${encodeURIComponent(data.new_password)}`;
-                } else if (data.success) {
-                    document.getElementById('loadingOverlay2').style.display = 'none';
+                document.getElementById('loadingOverlay2').style.display = 'none';
+                if (data.success) {
                     Swal.fire({
                         icon: "success",
                         title: "Password Updated!",
                         text: data.message,
                         confirmButtonColor: "#009688"
                     }).then(() => {
-                        window.location.href = "Userlogin.html";
+                        window.location.href = "../Html_Codes/Userlogin.html";
                     });
                 } else {
-                    document.getElementById('loadingOverlay2').style.display = 'none';
                     Swal.fire({
                         icon: "error",
                         title: "Error",
@@ -145,5 +198,13 @@
         });
     });
     </script>
+
+    <?php
+    // Debug log for email and reset_token from GET
+    if (isset($_GET['email']) || isset($_GET['reset_token'])) {
+        error_log('ForgetPass.php GET email: ' . (isset($_GET['email']) ? $_GET['email'] : 'none'));
+        error_log('ForgetPass.php GET reset_token: ' . (isset($_GET['reset_token']) ? $_GET['reset_token'] : 'none'));
+    }
+    ?>
 </body>
 </html>

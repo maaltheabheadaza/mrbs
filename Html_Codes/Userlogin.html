@@ -144,16 +144,8 @@
                         <input type="email" name="forgot_email" placeholder="Enter your Email" required>
                         <i class="uil uil-envelope icon"></i>
                     </div>
-                    <div class="input-field">
-                        <input type="password" name="forgot_new_password" placeholder="Enter new password" required>
-                        <i class="uil uil-lock icon"></i>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" name="forgot_confirm_password" placeholder="Confirm new password" required>
-                        <i class="uil uil-lock icon"></i>
-                    </div>
                     <div class="input-field button">
-                        <input type="submit" value="Update Password">
+                        <input type="submit" value="Verify Email">
                     </div>
                 </form>
                 <div class="login-signup">
@@ -167,7 +159,7 @@
     <div id="loadingOverlay" style="display:none;">
       <div class="loader-box">
         <div class="spinner"></div>
-        <span>Processing your registration...</span>
+        <span id="loadingOverlayText">Processing your request...</span>
       </div>
     </div>
     <style>
@@ -290,8 +282,6 @@
         document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = this.forgot_email.value.trim();
-            const newPassword = this.forgot_new_password.value;
-            const confirmPassword = this.forgot_confirm_password.value;
             if (!email) {
                 Swal.fire({
                     icon: "error",
@@ -301,20 +291,12 @@
                 });
                 return;
             }
-            if (newPassword !== confirmPassword) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Password Mismatch",
-                    text: "The passwords do not match. Please try again.",
-                    confirmButtonColor: "#009688"
-                });
-                return;
-            }
+            // Show loading overlay with correct text
+            document.getElementById('loadingOverlayText').textContent = 'Processing your request...';
+            document.getElementById('loadingOverlay').style.display = 'flex';
             const formData = new FormData();
             formData.append('email', email);
-            formData.append('new_password', newPassword);
-            formData.append('confirm_password', confirmPassword);
-            fetch('../Php_Codes/update_password.php', {
+            fetch('../Php_Codes/request_reset_otp.php', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -323,23 +305,27 @@
             })
             .then(response => response.json())
             .then(data => {
+                document.getElementById('loadingOverlay').style.display = 'none';
                 if (data.success) {
                     Swal.fire({
                         icon: "success",
-                        title: "Password Updated!",
+                        title: "OTP Sent!",
                         text: data.message,
                         confirmButtonColor: "#009688"
+                    }).then(() => {
+                        window.location.href = `../Php_Codes/ForgetPass.php?email=${encodeURIComponent(email)}`;
                     });
                 } else {
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
-                        text: data.message || 'Unknown error',
+                        title: "Request Failed",
+                        text: data.message,
                         confirmButtonColor: "#009688"
                     });
                 }
             })
             .catch(error => {
+                document.getElementById('loadingOverlay').style.display = 'none';
                 Swal.fire({
                     icon: "error",
                     title: "Error",
