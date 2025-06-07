@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 04, 2025 at 08:43 PM
+-- Generation Time: Jun 07, 2025 at 11:47 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -41,7 +41,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `fullname`, `email`, `contact_number`, `valid_password`, `profile_image`) VALUES
-(0, 'Admin 1', 'ma.altheabhea.daza@gmail.com', '9703497121', 'admin123', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1745046621/admin_profiles/hdrgn1ioqwdsn1m3pkwt.jpg');
+(1, 'Admin 1', 'ma.altheabhea.daza@gmail.com', '9703497121', 'admin123', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1745046621/admin_profiles/hdrgn1ioqwdsn1m3pkwt.jpg');
 
 -- --------------------------------------------------------
 
@@ -82,7 +82,10 @@ INSERT INTO `bookingform1` (`id`, `fullname`, `email`, `full_address`, `contact_
 (14, 'Test User', 'altheadaza934@gmail.com', '', 0, 'Community Hall A', 'Test Booking', '2025-04-19', '2025-04-19', '14:00:00', '16:00:00', '', '0000-00-00 00:00:00', 'pending'),
 (15, 'Test User', 'altheadaza934@gmail.com', '', 0, 'Community Hall A', 'Test Booking', '2025-04-19', '2025-04-19', '14:00:00', '16:00:00', '', '0000-00-00 00:00:00', 'pending'),
 (16, 'Ma. Althea Bhea Daza', 'ma.altheabhea.daza@gmail.com', 'Tokyo, Japan', 9703497121, 'Meeting Office', 'Meeting', '2025-04-19', '2025-04-20', '18:30', '18:30', 'unta naay aircon', '2025-04-19 12:00:01', 'pending'),
-(17, 'Ma. Althea Bhea Daza', 'ma.altheabhea.daza@gmail.com', 'Tokyo, Japan', 9703497121, 'Formation Building', 'Event', '2025-04-19', '2025-04-20', '19:00', '19:00', 'unta lagi naay aircon samoka', '2025-04-19 12:06:48', 'pending');
+(17, 'Ma. Althea Bhea Daza', 'ma.altheabhea.daza@gmail.com', 'Tokyo, Japan', 9703497121, 'Formation Building', 'Event', '2025-04-19', '2025-04-20', '19:00', '19:00', 'unta lagi naay aircon samoka', '2025-04-19 12:06:48', 'pending'),
+(19, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Plaza', 'Event', '2025-06-13', '2025-06-13', '20:47', '23:53', 'N/A', '2025-06-04 21:47:51', 'approved'),
+(20, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Center', 'Activity', '2025-06-29', '2025-06-29', '10:00', '13:00', 'N/A', '2025-06-04 22:11:24', 'approved'),
+(21, 'Almackie Andrew Bangalao', 'almackie101@gmail.com', 'Albuera Leyte', 9677017482, 'Meeting Office', 'Meeting', '2025-06-06', '2025-06-06', '19:00', '22:00', 'N/A', '2025-06-06 08:11:44', 'approved');
 
 -- --------------------------------------------------------
 
@@ -120,12 +123,12 @@ INSERT INTO `bookingform2` (`id`, `fullname`, `email`, `full_address`, `contact_
 (5, 'Donna Isabel J. Bangalao', 'donnaisabel@gmail.com', 'San Jose St. Poblacion Albuera Leyte', 9876543210, 'Swimming Pool', 'Practice', '2024-06-24', '2024-06-24', '08:00', '10:00', 'n/a', 'n/a', '2024-05-18 21:00:41', 'pending'),
 (6, 'Stephanie Angel Nudalo', 'stephanieangelnudalo@gmail.com', 'Brgy. Cambalading Albuera Leyte', 9998887777, 'Volleyball Court', 'Practice', '2024-10-30', '2024-10-30', '05:00', '09:00', '2 Volleyball ', 'N/A', '2024-05-21 09:02:08', 'pending'),
 (7, 'Donna Isabel J. Bangalao', 'donnaisabel@gmail.com', 'San Jose St. Poblacion Albuera Leyte', 9876543210, 'Table Tennis', 'Practice', '2024-04-29', '2024-04-29', '10:38', '11:53', 'N/A', 'N/A', '2024-05-26 12:36:58', 'pending'),
-(8, 'Alteya', 'altheadaza934@gmail.com', 'Tokyo, Japan', 9703497121, 'Volleyball Court', 'Practice', '2025-04-20', '2025-04-21', '06:27', '18:27', 'N/A', 'N/A', '2025-04-19 11:27:43', 'pending'),
-(9, 'Tirzo Charles Apuya', 'apuyatirzocharles@gmail.com', 'Latina, Leyte', 9703497121, 'Gymnasium', 'Event', '2025-04-20', '2025-04-21', '18:10', '18:10', 'N/A', 'UNTA NAAY AIRCON SHIBAL ALIMOOT KAAYO', '2025-04-19 12:11:28', 'pending'),
-(11, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Swimming Pool', 'Practice', '2025-06-30', '2025-06-30', '08:12', '20:12', 'N/A', 'N/A', '2025-06-03 21:12:40', 'pending'),
-(12, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Swimming Pool', 'Practice', '2025-06-30', '2025-06-30', '08:12', '20:12', 'N/A', 'N/A', '2025-06-03 21:16:18', 'pending'),
-(13, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Volleyball Court', 'Activity', '2025-06-11', '2025-06-11', '15:19', '19:19', 'N/A', 'N/A', '2025-06-03 21:20:06', 'pending'),
-(14, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Field/Oval', 'Event', '2025-06-17', '2025-06-17', '15:19', '19:19', 'N/A', 'N/A', '2025-06-03 21:24:16', 'pending');
+(8, 'Alteya', 'altheadaza934@gmail.com', 'Tokyo, Japan', 9703497121, 'Volleyball Court', 'Practice', '2025-04-20', '2025-04-21', '06:27', '18:27', 'N/A', 'N/A', '2025-04-19 11:27:43', 'declined'),
+(11, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Swimming Pool', 'Practice', '2025-06-30', '2025-06-30', '08:12', '20:12', 'N/A', 'N/A', '2025-06-03 21:12:40', 'declined'),
+(12, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Swimming Pool', 'Practice', '2025-06-30', '2025-06-30', '08:12', '20:12', 'N/A', 'N/A', '2025-06-03 21:16:18', 'approved'),
+(13, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Volleyball Court', 'Activity', '2025-06-11', '2025-06-11', '15:19', '19:19', 'N/A', 'N/A', '2025-06-03 21:20:06', 'approved'),
+(14, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Field/Oval', 'Event', '2025-06-17', '2025-06-17', '15:19', '19:19', 'N/A', 'N/A', '2025-06-03 21:24:16', 'pending'),
+(15, 'Almackie Andrew Bangalao', 'almackie101@gmail.com', 'Albuera Leyte', 9677017482, 'Basketball Court', 'Game', '2025-06-06', '2025-06-06', '18:30', '22:30', 'N/A', 'N/A', '2025-06-06 08:13:24', 'declined');
 
 -- --------------------------------------------------------
 
@@ -163,7 +166,9 @@ INSERT INTO `bookingform3` (`id`, `fullname`, `email`, `full_address`, `contact_
 (6, 'Mark Lindon Serato', 'marklindonserato@gmail.com', 'Brgy. Wangag Albuera Leyte', 9223336666, 'Trycycle', 'Team Building', '2024-06-04', '04:00', 'Cebu City', '12', 'N/A', '2024-05-21 14:33:03', 'pending'),
 (7, 'Ma. Althea Bhea Daza', 'altheadaza934@gmail.com', 'Tokyo, Japan', 9703497121, 'Van', 'Travel', '2025-04-19', '18:34', 'Manila', '1', 'N/A', '2025-04-19 17:34:40', 'pending'),
 (8, 'Tirzo Batumbakal', 'apuyatirzocharles@gmail.com', 'Latina, Leyte', 9703497121, 'Van', 'Travel', '2025-04-19', '18:30', 'North Korea', '7', 'N/A', '2025-04-19 17:57:41', 'pending'),
-(9, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Potpot', 'Travel', '2025-06-18', '03:02', 'Agas-Agas Bridge', '2', 'N/A', '2025-06-04 03:03:12', 'pending');
+(9, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Potpot', 'Travel', '2025-06-18', '03:02', 'Agas-Agas Bridge', '2', 'N/A', '2025-06-04 03:03:12', 'declined'),
+(10, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', 'Albuera Leyte', 9677017482, 'Trycycle', 'Travel Event', '2025-06-13', '09:00', 'Baybay City', '2', 'N/A', '2025-06-05 03:00:50', 'approved'),
+(11, 'Almackie Andrew Bangalao', 'almackie101@gmail.com', 'Albuera Leyte', 9677017482, 'Multicab', 'Gathering', '2025-06-06', '15:00', 'Albuera Leyte', '1', 'N/A', '2025-06-06 14:14:11', 'pending');
 
 -- --------------------------------------------------------
 
@@ -263,7 +268,8 @@ INSERT INTO `contact_us` (`id`, `fullname`, `email`, `messages`, `time_sent`) VA
 (1, 'Maria Daniel Lois B. Gian', 'mariadaniellois@gmail.com', 'pwede ko makigstorya sa admin aning websit kay rag daghan kaayung kuwang og need i improve ba, nag kayamokat lang ang agi', '2024-05-19 02:22:17'),
 (2, 'Annie Rose Fernandez', 'annierosefernandez@gmail.com', 'Unta na lihok na sa admin akong gi book kay i report jud nako og wala pa ba', '2024-05-19 02:53:13'),
 (3, 'Donna Isabel J. Bangalao', 'donnaisabel@gmail.com', 'Akong anak moy admin ang website, perpek kaayu para nako. maong kong kinsay mo check ani ayaw intawn hagbunga, although di ni perpek para nimo pero ay lang sad hatagig 2 ako anak HAHAHAHA', '2024-05-19 22:43:58'),
-(4, 'vice Ganda', 'example@gmail.com', 'asadsadasdsadsa', '2024-05-23 15:05:47');
+(4, 'vice Ganda', 'example@gmail.com', 'asadsadasdsadsa', '2024-05-23 15:05:47'),
+(5, 'Almackie Andrew Bangalao', 'almackie101@gmail.com', 'wala ra', '2025-06-05 16:48:44');
 
 -- --------------------------------------------------------
 
@@ -286,12 +292,19 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `fullname`, `email`, `contact_number`, `full_address`, `valid_password`, `profile_image`) VALUES
-(19, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', '9677017482', 'Albuera Leyte', '$2y$10$xuqzpH5ojH1Ru415aEpJB.U.jluWXRrqvCltUyh1XKMEtvDUW7ELu', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1749050724/user_profiles/vpegmjswnmj7cckcrllf.jpg'),
-(20, 'Maria Daniel Lois B. Gian', 'almackie101@gmail.com', '9677017482', 'Albuera Leyte', '$2y$10$XrVH1R6gMstQ5pUjiMoiwezY35MsFt/IMNjcU4r61J.MpKiMkr.7i', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1749058914/user_profiles/ojl9gmktck23x5csm1jn.jpg');
+(1, 'Almackie Andrew J. Bangalao', 'Almackie2227@gmail.com', '9677017482', 'Poblacion, Albuera Leyte', '$2y$10$JkahhkewjvWdUxxKuSpSK.AqcxAzgnfnfiHETIJOVIF3Svn6Ew/.C', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1749139431/user_profiles/lfmzlwb1vcptocfx7dwr.jpg'),
+(2, 'Almackie Andrew Bangalao', 'almackie101@gmail.com', '9677017482', 'Albuera Leyte', '$2y$10$CFsir7B5TTnjKKjd7tRO0eAqZ5XXs180DGF082cCxo467xA15vHdW', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1749190197/user_profiles/gfliqafgcbbe4bydmiy9.jpg'),
+(3, 'Almackie Andrew Bangalao', 'almackieandrew.bangalao@gmail.com', '9677017482', 'Albuera Leyte', '$2y$10$A22WB4T7Ru/fl/HkwIMkU.9lwM5c/3ggK5CSWhVpZFo2XiduR0rAa', 'https://res.cloudinary.com/dpojmjbwd/image/upload/v1749289223/user_profiles/eonwv5tha7k5uud0q7bz.png');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `bookingform1`
@@ -346,22 +359,28 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `bookingform1`
 --
 ALTER TABLE `bookingform1`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `bookingform2`
 --
 ALTER TABLE `bookingform2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `bookingform3`
 --
 ALTER TABLE `bookingform3`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `booking_preferences1`
@@ -385,13 +404,13 @@ ALTER TABLE `booking_preferences3`
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
