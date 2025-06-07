@@ -121,6 +121,22 @@ $admin = $_SESSION['admin'];
         background-color: #dc3545;
         color: white;
       }
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+      }
+      table {
+        min-width: 900px;
+      }
+      /* Limit width of Password column */
+      #userTable th:nth-child(6),
+      #userTable td:nth-child(6) {
+        max-width: 180px;
+        width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     </style>
   </head>
   <body>
@@ -218,8 +234,8 @@ $admin = $_SESSION['admin'];
                 <input type="text" id="searchInput" placeholder="Search here...">
         </div>
          
-
-        <table border="1" id="userTable" style="text-align:center; border-color:#000;">
+        <div class="table-responsive">
+        <table border="1" id="userTable" style="text-align:center; border-color:#000; min-width: 900px;">
             <tr>
               <th>ID</th>
               <th>Full Name</th>
@@ -260,6 +276,7 @@ $admin = $_SESSION['admin'];
             
             ?>
           </table>
+        </div>
 
     </main>
     <script src="../Javascript_Codes/AdminPage_searchuserscript.js"></script>

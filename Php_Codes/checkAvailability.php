@@ -156,20 +156,12 @@
         if ($conn->connect_error) {
             die("Connection Failed: " . $conn->connect_error);
         }
-        $sql = "SELECT id, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime FROM bookingform1 ORDER BY id DESC";
+        $sql = "SELECT id, bookingpreference, reason, event_date_start, event_date_end, event_time_start, event_time_end, others, bookingtime, status FROM bookingform1 ORDER BY id DESC";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $status = 'Upcoming';
-                $rowClass = 'highlight-upcoming';
-                if ($row["event_date_end"] < $today) {
-                    $status = 'Completed';
-                    $rowClass = 'highlight-past';
-                } elseif ($row["event_date_start"] <= $today && $row["event_date_end"] >= $today) {
-                    $status = 'Ongoing';
-                    $rowClass = 'highlight-today';
-                }
-                echo "<tr class='$rowClass'><td>" . $row["id"] .
+                $status = (!empty($row["status"])) ? $row["status"] : 'pending';
+                echo "<tr><td>" . $row["id"] .
                     "</td><td>" . htmlspecialchars($row["bookingpreference"]) .
                     "</td><td>" . htmlspecialchars($row["reason"]) .
                     "</td><td>" . date('M d, Y', strtotime($row["event_date_start"])) .
@@ -177,7 +169,7 @@
                     "</td><td>" . date('h:i A', strtotime($row["event_time_start"])) .
                     "</td><td>" . date('h:i A', strtotime($row["event_time_end"])) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td>" . $status . "</td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }
@@ -213,20 +205,12 @@
         if ($conn->connect_error) {
             die("Connection Failed: " . $conn->connect_error);
         }
-        $sql = "SELECT id, bookingpreference, reason, book_date_start, book_date_end, book_time_start, book_time_end, sport_equipment, others, bookingtime FROM bookingform2 ORDER BY id DESC";
+        $sql = "SELECT id, bookingpreference, reason, book_date_start, book_date_end, book_time_start, book_time_end, sport_equipment, others, bookingtime, status FROM bookingform2 ORDER BY id DESC";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $status = 'Upcoming';
-                $rowClass = 'highlight-upcoming';
-                if ($row["book_date_end"] < $today) {
-                    $status = 'Completed';
-                    $rowClass = 'highlight-past';
-                } elseif ($row["book_date_start"] <= $today && $row["book_date_end"] >= $today) {
-                    $status = 'Ongoing';
-                    $rowClass = 'highlight-today';
-                }
-                echo "<tr class='$rowClass'><td>" . $row["id"] .
+                $status = (!empty($row["status"])) ? $row["status"] : 'pending';
+                echo "<tr><td>" . $row["id"] .
                     "</td><td>" . htmlspecialchars($row["bookingpreference"]) .
                     "</td><td>" . htmlspecialchars($row["reason"]) .
                     "</td><td>" . date('M d, Y', strtotime($row["book_date_start"])) .
@@ -235,7 +219,7 @@
                     "</td><td>" . date('h:i A', strtotime($row["book_time_end"])) .
                     "</td><td>" . htmlspecialchars($row["sport_equipment"]) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td>" . $status . "</td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }
@@ -270,20 +254,12 @@
         if($conn->connect_error) {
             die("Connection Failed: ".$conn->connect_error);
         }
-        $sql = "SELECT id, vehicle_type, reason, pick_up_date, pick_up_time, destination, days_use, others, bookingtime from bookingform3 ORDER BY id DESC";
+        $sql = "SELECT id, vehicle_type, reason, pick_up_date, pick_up_time, destination, days_use, others, bookingtime, status from bookingform3 ORDER BY id DESC";
         $result = $conn->query($sql);
         if($result->num_rows>0) {
             while($row = $result->fetch_assoc()) {
-                $status = 'Upcoming';
-                $rowClass = 'highlight-upcoming';
-                if ($row["pick_up_date"] < $today) {
-                    $status = 'Completed';
-                    $rowClass = 'highlight-past';
-                } elseif ($row["pick_up_date"] == $today) {
-                    $status = 'Ongoing';
-                    $rowClass = 'highlight-today';
-                }
-                echo "<tr class='$rowClass'><td>" . $row["id"] .
+                $status = (!empty($row["status"])) ? $row["status"] : 'pending';
+                echo "<tr><td>" . $row["id"] .
                     "</td><td>" . htmlspecialchars($row["vehicle_type"]) .
                     "</td><td>" . htmlspecialchars($row["reason"]) .
                     "</td><td>" . date('M d, Y', strtotime($row["pick_up_date"])) .
@@ -291,7 +267,7 @@
                     "</td><td>" . htmlspecialchars($row["destination"]) .
                     "</td><td>" . htmlspecialchars($row["days_use"]) .
                     "</td><td>" . htmlspecialchars($row["others"]) .
-                    "</td><td><span class='status-badge status-" . strtolower($status) . "'>" . $status . "</span></td>" .
+                    "</td><td>" . $status . "</td>" .
                     "<td>" . date('M d, Y h:i A', strtotime($row["bookingtime"])) . "</td></tr>";
             }
         }

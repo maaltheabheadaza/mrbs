@@ -7,7 +7,7 @@ class UserAuthAPI {
 
     public function __construct($apiKey) {
         $this->apiKey = $apiKey;
-        $this->baseUrl = 'https://e517-122-54-183-231.ngrok-free.app';
+        $this->baseUrl = 'https://447f-122-54-183-231.ngrok-free.app/';
         $this->authToken = isset($_SESSION['auth_token']) ? $_SESSION['auth_token'] : null;
     }
 

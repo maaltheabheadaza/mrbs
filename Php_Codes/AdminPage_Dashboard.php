@@ -337,9 +337,14 @@ $profileImage = $_SESSION['admin']['profile_image'];
                 <li class="item">
                   <a href="../Php_Codes/AdminPage_messages.php">Messages</a>
                 </li>
-                <li class="item bottom1">
-                    <a href="#" onclick="showLogoutModal(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
-                </li>
+            </ul>
+            <ul style="margin-top: -117px;">
+              <li class="item bottom1">
+                <a href="#">Settings</a>
+              </li>
+              <li class="item bottom2">
+                <a href="#" onclick="showLogoutModal(); return false;">Logout</a>
+              </li>
             </ul>
         </div>
     </nav>

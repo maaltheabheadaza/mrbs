@@ -21,28 +21,44 @@
     $contactNumber = $_POST['contact_number'];
     $password = $_POST['valid_password'];
 
+    // Hash the password for security
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
     // Handle image upload
     $imageUrl = null;
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
-            'folder' => 'admin_profiles'
-        ]);
-        $imageUrl = $uploadResult['secure_url'];
+        try {
+            $uploadResult = $cloudinary->uploadApi()->upload($_FILES['profile_image']['tmp_name'], [
+                'folder' => 'admin_profiles'
+            ]);
+            $imageUrl = $uploadResult['secure_url'];
+        } catch (Exception $e) {
+            echo '<script>alert("Image upload failed: ' . addslashes($e->getMessage()) . '");</script>';
+            echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
+            exit();
+        }
     }
 
     $conn = new mysqli('localhost', 'root', '', 'user_info');
     if($conn->connect_error) {
         die("Connection Failed: " .$conn->connect_error);
     } else {
-        $stmt = $conn->prepare("INSERT into admin (fullname, email, contact_number, valid_password, profile_image)
-         VALUES (?, ?, ?, ?, ?)");
-
-        $stmt->bind_param("ssiss", $fullname, $email, $contactNumber, $password, $imageUrl);
-
-        $stmt->execute();
-        echo '<script>alert("Register Successfully!");</script>';
-        echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
-
+        // Insert NULL for id (auto-increment if set), or remove id if not needed
+        $stmt = $conn->prepare("INSERT INTO admin (id, fullname, email, contact_number, valid_password, profile_image) VALUES (NULL, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            echo '<script>alert("Database error: ' . addslashes($conn->error) . '");</script>';
+            echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
+            $conn->close();
+            exit();
+        }
+        $stmt->bind_param("sssss", $fullname, $email, $contactNumber, $hashedPassword, $imageUrl);
+        if ($stmt->execute()) {
+            echo '<script>alert("Register Successfully!");</script>';
+            echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
+        } else {
+            echo '<script>alert("Registration failed: ' . addslashes($stmt->error) . '");</script>';
+            echo '<script>window.location.href = "../Html_Codes/adminlogin.html";</script>';
+        }
         $stmt->close();
         $conn->close();
     }   
