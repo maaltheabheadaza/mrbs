@@ -122,6 +122,8 @@ if ($registerResponse['status'] === 200 && isset($registerResponse['data']['succ
     }
     // Send OTP email using PHPMailer
     $mail = new PHPMailer(true);
+    $emailSent = false;
+    $mailError = '';
     try {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
@@ -138,22 +140,27 @@ if ($registerResponse['status'] === 200 && isset($registerResponse['data']['succ
         $mail->send();
         $emailSent = true;
     } catch (Exception $e) {
+        $mailError = $e->getMessage();
+        error_log('PHPMailer error: ' . $mailError);
         $emailSent = false;
     }
     header('Content-Type: application/json');
     echo json_encode([
         'success' => true,
-        'message' => $emailSent ? 'Registration successful! Please check your email for the OTP.' : 'Registration successful, but failed to send OTP email.',
+        'message' => $emailSent ? 'Registration successful! Please check your email for the OTP.' : 'Registration successful, but failed to send OTP email. Error: ' . $mailError,
         'require_otp' => true,
         'email' => $email,
         'fullname' => $fullname,
         'contact_number' => $contactNumber,
         'full_address' => $address,
         'valid_password' => $password,
-        'profile_image_url' => $imageUrl
+        'profile_image_url' => $imageUrl,
+        'mail_error' => $mailError,
+        'api_response' => $registerResponse
     ]);
     exit;
 } else {
+    error_log('Registration failed! API response: ' . print_r($registerResponse, true));
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
